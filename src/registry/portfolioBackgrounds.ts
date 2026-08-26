@@ -29,13 +29,30 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
       { name: 'light1Diffuse', label: 'Light 1 Diffuse', type: 'color', defaultValue: '#ec4899' },
       { name: 'segments', label: 'Mesh Segments', type: 'slider', defaultValue: 16, min: 6, max: 32, step: 2 },
       { name: 'slices', label: 'Mesh Slices', type: 'slider', defaultValue: 12, min: 6, max: 28, step: 2 },
+      { name: 'speed', label: 'Wave Flow Speed', type: 'slider', defaultValue: 0.001, min: 0.0005, max: 0.005, step: 0.0005 },
     ],
     apiDocs: [
       { name: 'meshAmbient', type: 'string', default: "'#334155'", description: 'Base ambient color of the polygon mesh' },
+      { name: 'meshDiffuse', type: 'string', default: "'#64748b'", description: 'Base diffuse highlight color of the polygon mesh' },
       { name: 'light1Ambient', type: 'string', default: "'#6366f1'", description: 'Primary light source ambient color' },
+      { name: 'light1Diffuse', type: 'string', default: "'#ec4899'", description: 'Primary light source diffuse highlight' },
     ],
     component: BackgroundFSS,
-    codeTSX: `// BackgroundFSS.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { BackgroundFSS } from './BackgroundFSS';
+
+export default function Demo() {
+  return (
+    <BackgroundFSS
+      meshAmbient="#334155"
+      meshDiffuse="#64748b"
+      light1Ambient="#6366f1"
+      light1Diffuse="#ec4899"
+      segments={16}
+      slices={12}
+    />
+  );
+}`,
     codeJSX: `// JSX version available`,
     demoUsage: `<BackgroundFSS meshAmbient="#334155" light1Ambient="#6366f1" />`,
   },
@@ -51,7 +68,12 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
     propsConfig: [],
     apiDocs: [],
     component: Demo1,
-    codeTSX: `// Demo1.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Demo1 } from './Demo1';
+
+export default function Demo() {
+  return <Demo1 />;
+}`,
     codeJSX: `// JSX version available`,
     demoUsage: `<Demo1 />`,
   },
@@ -67,7 +89,12 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
     propsConfig: [],
     apiDocs: [],
     component: Demo2,
-    codeTSX: `// Demo2.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Demo2 } from './Demo2';
+
+export default function Demo() {
+  return <Demo2 />;
+}`,
     codeJSX: `// JSX version available`,
     demoUsage: `<Demo2 />`,
   },
@@ -91,7 +118,12 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
       { name: 'color', type: 'string', default: "'#7B7481'", description: 'Color tint of the silk surface' },
     ],
     component: Demo3,
-    codeTSX: `// Demo3.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Demo3 } from './Demo3';
+
+export default function Demo() {
+  return <Demo3 speed={5} color="#7B7481" />;
+}`,
     codeJSX: `// JSX version available`,
     demoUsage: `<Demo3 speed={5} color="#7B7481" />`,
   },
@@ -104,12 +136,26 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
     description: 'Topographic contour scan lines animated with procedural 3D Perlin noise and cursor deflection.',
     dependencies: ['three'],
     cliCommand: 'npx sidd-reacts add scanning-lines-demo4',
-    propsConfig: [],
-    apiDocs: [],
+    propsConfig: [
+      { name: 'lineColor', label: 'Contour Line Color', type: 'color', defaultValue: '#fe0e55' },
+      { name: 'linesAmount', label: 'Number of Lines', type: 'slider', defaultValue: 20, min: 8, max: 45, step: 1 },
+      { name: 'radius', label: 'Sphere Radius', type: 'slider', defaultValue: 90, min: 40, max: 150, step: 5 },
+      { name: 'speed', label: 'Wave Scan Speed', type: 'slider', defaultValue: 1, min: 0.2, max: 3, step: 0.1 },
+      { name: 'noiseIntensity', label: 'Noise Turbulence', type: 'slider', defaultValue: 15, min: 2, max: 40, step: 1 },
+    ],
+    apiDocs: [
+      { name: 'lineColor', type: 'string', default: "'#fe0e55'", description: 'Hex color of the animated scanning lines' },
+      { name: 'linesAmount', type: 'number', default: '20', description: 'Total vertical slices' },
+    ],
     component: Demo4,
-    codeTSX: `// Demo4.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Demo4 } from './Demo4';
+
+export default function Demo() {
+  return <Demo4 lineColor="#fe0e55" linesAmount={20} />;
+}`,
     codeJSX: `// JSX version available`,
-    demoUsage: `<Demo4 />`,
+    demoUsage: `<Demo4 lineColor="#fe0e55" linesAmount={20} />`,
   },
 
   {
@@ -121,18 +167,40 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
     dependencies: ['three'],
     cliCommand: 'npx sidd-reacts add ballpit-3d',
     propsConfig: [
-      { name: 'count', label: 'Sphere Count', type: 'slider', defaultValue: 100, min: 20, max: 250, step: 10 },
-      { name: 'gravity', label: 'Gravity Force', type: 'slider', defaultValue: 0.01, min: 0.001, max: 0.05, step: 0.002 },
-      { name: 'friction', label: 'Air Friction', type: 'slider', defaultValue: 0.9975, min: 0.95, max: 0.9999, step: 0.0005 },
-      { name: 'wallBounce', label: 'Wall Restitution', type: 'slider', defaultValue: 0.95, min: 0.5, max: 1.2, step: 0.05 },
+      { name: 'count', label: 'Sphere Count', type: 'slider', defaultValue: 100, min: 20, max: 200, step: 10 },
+      { name: 'gravity', label: 'Gravity Force', type: 'slider', defaultValue: 0.012, min: 0.001, max: 0.05, step: 0.002 },
+      { name: 'friction', label: 'Air Friction', type: 'slider', defaultValue: 0.995, min: 0.95, max: 0.9999, step: 0.0005 },
+      { name: 'wallBounce', label: 'Wall Restitution', type: 'slider', defaultValue: 0.92, min: 0.5, max: 1.1, step: 0.05 },
+      { name: 'color1', label: 'Ball Color 1', type: 'color', defaultValue: '#a855f7' },
+      { name: 'color2', label: 'Ball Color 2', type: 'color', defaultValue: '#ec4899' },
+      { name: 'color3', label: 'Ball Color 3', type: 'color', defaultValue: '#3b82f6' },
+      { name: 'color4', label: 'Ball Color 4', type: 'color', defaultValue: '#06b6d4' },
+      { name: 'bgColor', label: 'Background Color', type: 'color', defaultValue: '#060608' },
+      { name: 'followCursor', label: 'Cursor Attraction', type: 'boolean', defaultValue: true },
     ],
     apiDocs: [
       { name: 'count', type: 'number', default: '100', description: 'Number of spheres in the 3D physics space' },
+      { name: 'color1', type: 'string', default: "'#a855f7'", description: 'Palette color 1 for balls' },
+      { name: 'color2', type: 'string', default: "'#ec4899'", description: 'Palette color 2 for balls' },
     ],
     component: Ballpit,
-    codeTSX: `// Ballpit.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Ballpit } from './Ballpit';
+
+export default function Demo() {
+  return (
+    <Ballpit
+      count={100}
+      gravity={0.012}
+      color1="#a855f7"
+      color2="#ec4899"
+      color3="#3b82f6"
+      color4="#06b6d4"
+    />
+  );
+}`,
     codeJSX: `// JSX version available`,
-    demoUsage: `<Ballpit count={100} gravity={0.01} />`,
+    demoUsage: `<Ballpit count={100} color1="#a855f7" color2="#ec4899" />`,
   },
 
   {
@@ -143,12 +211,25 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
     description: 'Interactive wireframe wave sphere pulsating with audio-reactive sinusoidal frequencies in 3D space.',
     dependencies: ['three'],
     cliCommand: 'npx sidd-reacts add wave-sphere-demo6',
-    propsConfig: [],
-    apiDocs: [],
+    propsConfig: [
+      { name: 'color1', label: 'Line Color 1', type: 'color', defaultValue: '#fe0e55' },
+      { name: 'color2', label: 'Line Color 2', type: 'color', defaultValue: '#0077ff' },
+      { name: 'linesCount', label: 'Wave Lines Count', type: 'slider', defaultValue: 30, min: 10, max: 60, step: 2 },
+      { name: 'speed', label: 'Pulsation Speed', type: 'slider', defaultValue: 1, min: 0.2, max: 3, step: 0.1 },
+    ],
+    apiDocs: [
+      { name: 'color1', type: 'string', default: "'#fe0e55'", description: 'Primary sinusoidal wire color' },
+      { name: 'color2', type: 'string', default: "'#0077ff'", description: 'Secondary sinusoidal wire color' },
+    ],
     component: Demo6,
-    codeTSX: `// Demo6.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Demo6 } from './Demo6';
+
+export default function Demo() {
+  return <Demo6 color1="#fe0e55" color2="#0077ff" linesCount={30} />;
+}`,
     codeJSX: `// JSX version available`,
-    demoUsage: `<Demo6 />`,
+    demoUsage: `<Demo6 color1="#fe0e55" color2="#0077ff" />`,
   },
 
   {
@@ -159,12 +240,28 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
     description: 'Matrix of 3D rounded cubes that repel away from cursor proximity with spring dampening physics.',
     dependencies: ['three', 'gsap'],
     cliCommand: 'npx sidd-reacts add interactive-repulsion-demo7',
-    propsConfig: [],
-    apiDocs: [],
+    propsConfig: [
+      { name: 'meshColor', label: 'Mesh Geometry Color', type: 'color', defaultValue: '#ff00ff' },
+      { name: 'ambientColor', label: 'Ambient Light Color', type: 'color', defaultValue: '#2900af' },
+      { name: 'spotColor', label: 'Spotlight Beam Color', type: 'color', defaultValue: '#e000ff' },
+      { name: 'rectColor', label: 'Rectangular Light Color', type: 'color', defaultValue: '#0077ff' },
+      { name: 'metalness', label: 'Surface Metalness', type: 'slider', defaultValue: 0.58, min: 0, max: 1, step: 0.05 },
+      { name: 'roughness', label: 'Surface Roughness', type: 'slider', defaultValue: 0.18, min: 0, max: 1, step: 0.05 },
+      { name: 'backgroundColor', label: 'Scene Floor Tint', type: 'color', defaultValue: '#121218' },
+    ],
+    apiDocs: [
+      { name: 'meshColor', type: 'string', default: "'#ff00ff'", description: 'Color of the 3D repulsive cubes and prisms' },
+      { name: 'spotColor', type: 'string', default: "'#e000ff'", description: 'Color of the overhead spotlight' },
+    ],
     component: Demo7,
-    codeTSX: `// Demo7.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Demo7 } from './Demo7';
+
+export default function Demo() {
+  return <Demo7 meshColor="#ff00ff" ambientColor="#2900af" spotColor="#e000ff" />;
+}`,
     codeJSX: `// JSX version available`,
-    demoUsage: `<Demo7 />`,
+    demoUsage: `<Demo7 meshColor="#ff00ff" spotColor="#e000ff" />`,
   },
 
   {
@@ -186,7 +283,12 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
       { name: 'highlightColor', type: 'string', default: "'#c084fc'", description: 'Upper atmospheric highlight tint' },
     ],
     component: Fog,
-    codeTSX: `// Fog.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Fog } from './Fog';
+
+export default function Demo() {
+  return <Fog highlightColor="#c084fc" midtoneColor="#6366f1" speed={1.5} />;
+}`,
     codeJSX: `// JSX version available`,
     demoUsage: `<Fog highlightColor="#c084fc" midtoneColor="#6366f1" speed={1.5} />`,
   },
@@ -209,7 +311,12 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
       { name: 'wavesColor', type: 'string', default: "'#005588'", description: 'Primary ocean wave hex color' },
     ],
     component: Waves,
-    codeTSX: `// Waves.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { Waves } from './Waves';
+
+export default function Demo() {
+  return <Waves wavesColor="#005588" waveHeight={15} />;
+}`,
     codeJSX: `// JSX version available`,
     demoUsage: `<Waves wavesColor="#005588" waveHeight={15} />`,
   },
@@ -240,7 +347,12 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
       { name: 'color', type: 'string', default: "'#B19EEF'", description: 'Color tint of pixel blast particles' },
     ],
     component: PixelBlast,
-    codeTSX: `// PixelBlast.tsx implementation`,
+    codeTSX: `import React from 'react';
+import { PixelBlast } from './PixelBlast';
+
+export default function Demo() {
+  return <PixelBlast variant="square" pixelSize={6} color="#B19EEF" />;
+}`,
     codeJSX: `// JSX version available`,
     demoUsage: `<PixelBlast variant="square" pixelSize={6} color="#B19EEF" />`,
   },

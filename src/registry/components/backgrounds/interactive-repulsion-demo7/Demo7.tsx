@@ -1,293 +1,207 @@
 // @ts-nocheck
-// src/components/ThreeBackgrounds/Demo7.jsx
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 
-// Helpers from original interactive repulsive demo
 const radians = (degrees) => (degrees * Math.PI) / 180;
-const distance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+const distance = (x1, y1, x2, y2) => Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 const map = (value, start1, stop1, start2, stop2) =>
   ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
 
-const Demo7 = ({ config = {} }) => {
-  const mountRef = useRef(null);
+export interface BoxRepulsionProps {
+  meshColor?: string;
+  ambientColor?: string;
+  spotColor?: string;
+  rectColor?: string;
+  backgroundColor?: string;
+  metalness?: number;
+  roughness?: number;
+  className?: string;
+  config?: any;
+}
 
-  // Extract config props with exact defaults from the original demo
-  const backgroundColor = config.demo7BgColor || config.repulsiveBgColor || '#1b1b1b';
-  const ambientColor = config.demo7AmbientColor || config.repulsiveAmbientColor || '#2900af';
-  const spotColor = config.demo7SpotColor || config.repulsiveSpotColor || '#e000ff';
-  const rectColor = config.demo7RectColor || config.repulsiveRectColor || '#0077ff';
-  const meshColor = config.demo7MeshColor || config.repulsiveMeshColor || '#ff00ff';
-  const metalness = Number(config.demo7Metalness ?? config.repulsiveMetalness ?? 0.58);
-  const roughness = Number(config.demo7Roughness ?? config.repulsiveRoughness ?? 0.18);
+export const Demo7: React.FC<BoxRepulsionProps> = ({
+  meshColor = '#ff00ff',
+  ambientColor = '#2900af',
+  spotColor = '#e000ff',
+  rectColor = '#0077ff',
+  backgroundColor = '#121218',
+  metalness = 0.58,
+  roughness = 0.18,
+  className = '',
+  config = {},
+}) => {
+  const mountRef = useRef<HTMLDivElement>(null);
 
-  // Keep live references for colors & material so props update without scene recreation
+  const mCol = meshColor || config?.meshColor || config?.demo7MeshColor || '#ff00ff';
+  const ambCol = ambientColor || config?.ambientColor || config?.demo7AmbientColor || '#2900af';
+  const spCol = spotColor || config?.spotColor || config?.demo7SpotColor || '#e000ff';
+  const rcCol = rectColor || config?.rectColor || config?.demo7RectColor || '#0077ff';
+  const bgCol = backgroundColor || config?.backgroundColor || config?.demo7BgColor || '#121218';
+  const met = metalness !== undefined ? metalness : (config?.metalness ?? config?.demo7Metalness ?? 0.58);
+  const rough = roughness !== undefined ? roughness : (config?.roughness ?? config?.demo7Roughness ?? 0.18);
+
   const livePropsRef = useRef({
-    backgroundColor,
-    ambientColor,
-    spotColor,
-    rectColor,
-    meshColor,
-    metalness,
-    roughness
+    backgroundColor: bgCol,
+    ambientColor: ambCol,
+    spotColor: spCol,
+    rectColor: rcCol,
+    meshColor: mCol,
+    metalness: met,
+    roughness: rough,
   });
 
   useEffect(() => {
     livePropsRef.current = {
-      backgroundColor,
-      ambientColor,
-      spotColor,
-      rectColor,
-      meshColor,
-      metalness,
-      roughness
+      backgroundColor: bgCol,
+      ambientColor: ambCol,
+      spotColor: spCol,
+      rectColor: rcCol,
+      meshColor: mCol,
+      metalness: met,
+      roughness: rough,
     };
-  }, [backgroundColor, ambientColor, spotColor, rectColor, meshColor, metalness, roughness]);
+  }, [bgCol, ambCol, spCol, rcCol, mCol, met, rough]);
 
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
 
-    let width = mount.clientWidth || window.innerWidth;
-    let height = mount.clientHeight || window.innerHeight;
+    let width = mount.clientWidth || 800;
+    let height = mount.clientHeight || 500;
 
-    // Initialize RectAreaLight uniforms
     try {
       RectAreaLightUniformsLib.init();
     } catch (e) {
       // already initialized
     }
 
-    // --- SETUP SCENE & RENDERER ---
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(livePropsRef.current.backgroundColor);
 
-    // Exact Camera positioning from demo
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
     camera.position.set(0, 30, 0);
-    camera.lookAt(0, 0, 0);
-    scene.add(camera);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    // Keep tone mapping clean so magenta and ambient neon colors match original demo
-    renderer.toneMapping = THREE.NoToneMapping;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     mount.appendChild(renderer.domElement);
 
-    // --- LIGHTS MATCHING ORIGINAL REPO ---
-    // 1. Ambient Light (Deep purple/indigo)
-    const ambientLight = new THREE.AmbientLight(livePropsRef.current.ambientColor, 1.2);
-    scene.add(ambientLight);
+    // Grid Setup
+    const gutter = { size: 1.2 };
+    const meshSize = 1.6;
+    const groupMesh = new THREE.Object3D();
+    const rows = 10;
+    const cols = 16;
+    const meshes = [];
 
-    // 2. Spot Light (Vibrant magenta pointing directly onto the grid)
-    const spotLight = new THREE.SpotLight(livePropsRef.current.spotColor, 2.5, 1000);
-    spotLight.position.set(0, 27, 0);
-    spotLight.decay = 0;
-    spotLight.castShadow = true;
-    spotLight.shadow.mapSize.width = 1024;
-    spotLight.shadow.mapSize.height = 1024;
-    spotLight.shadow.camera.near = 10;
-    spotLight.shadow.camera.far = 50;
-    spotLight.shadow.bias = -0.001;
-    scene.add(spotLight);
+    const boxGeo = new RoundedBoxGeometry(meshSize, meshSize, meshSize, 4, 0.1);
+    const coneGeo = new THREE.ConeGeometry(meshSize * 0.7, meshSize * 1.2, 32);
+    const torusGeo = new THREE.TorusGeometry(meshSize * 0.5, 0.25, 16, 32);
 
-    // 3. Rect Area Light (Sky blue light for metallic edge highlights)
-    const rectLight = new THREE.RectAreaLight(livePropsRef.current.rectColor, 10.0, 2000, 2000);
-    rectLight.position.set(5, 50, 50);
-    rectLight.lookAt(0, 0, 0);
-    scene.add(rectLight);
+    const geometries = [boxGeo, coneGeo, torusGeo];
 
-    // 4. Point Lights (Warm yellow & green rim accents from original demo)
-    const pLight1 = new THREE.PointLight(0xfff000, 0.6, 1000);
-    pLight1.position.set(0, 10, -100);
-    pLight1.decay = 0;
-    scene.add(pLight1);
-
-    const pLight2 = new THREE.PointLight(0xfff000, 0.6, 1000);
-    pLight2.position.set(100, 10, 0);
-    pLight2.decay = 0;
-    scene.add(pLight2);
-
-    const pLight3 = new THREE.PointLight(0x00ff00, 0.5, 1000);
-    pLight3.position.set(20, 5, 20);
-    pLight3.decay = 0;
-    scene.add(pLight3);
-
-    // --- FLOOR FOR SHADOWS & RAYCASTING ---
-    const floorGeo = new THREE.PlaneGeometry(2000, 2000);
-    const floorMat = new THREE.ShadowMaterial({ opacity: 0.3 });
-    const floor = new THREE.Mesh(floorGeo, floorMat);
-    floor.position.y = 0;
-    floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
-    scene.add(floor);
-
-    // --- GEOMETRIES ---
-    const boxGeo = new RoundedBoxGeometry(0.5, 0.5, 0.5, 2, 0.04);
-    const coneGeo = new THREE.ConeGeometry(0.3, 0.5, 32);
-    const torusGeo = new THREE.TorusGeometry(0.3, 0.12, 24, 64);
-
-    const geometryTemplates = [
-      { geom: boxGeo, rotationX: 0, rotationY: 0, rotationZ: 0 },
-      { geom: torusGeo, rotationX: radians(90), rotationY: 0, rotationZ: 0 },
-      { geom: coneGeo, rotationX: 0, rotationY: 0, rotationZ: radians(-180) }
-    ];
-
-    const getRandomTemplate = () =>
-      geometryTemplates[Math.floor(Math.random() * geometryTemplates.length)];
-
-    // --- MESH MATERIAL WITH TRUE METALLIC HIGHLIGHTS ---
     const material = new THREE.MeshPhysicalMaterial({
       color: new THREE.Color(livePropsRef.current.meshColor),
       metalness: livePropsRef.current.metalness,
       roughness: livePropsRef.current.roughness,
-      emissive: new THREE.Color('#000000'),
-      clearcoat: 0.4,
-      clearcoatRoughness: 0.1
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.2,
     });
 
-    // --- DYNAMIC FULL-SCREEN GRID COMPUTATION ---
-    // Calculate visible frustum dimensions at y = 0 to cover the whole screen with a small margin
-    const gutter = { size: 1.2 };
-    const stepSize = 1 + gutter.size; // 2.2 units per cell
-
-    const getFrustumGrid = (w, h) => {
-      const vHeight = 2 * Math.tan((45 * Math.PI) / 360) * 30; // ~24.85
-      const vWidth = vHeight * (w / h);
-      // Small margin of ~3-4 units from screen boundaries
-      const cols = Math.max(7, Math.floor((vWidth - 3) / stepSize));
-      const rows = Math.max(5, Math.floor((vHeight - 3) / stepSize));
-      return { cols, rows };
-    };
-
-    let { cols, rows } = getFrustumGrid(width, height);
-    let meshes = [];
-    let groupMesh = new THREE.Object3D();
-
-    const buildGrid = (numCols, numRows) => {
-      // Clean previous meshes
-      while (groupMesh.children.length > 0) {
-        groupMesh.remove(groupMesh.children[0]);
+    for (let row = 0; row < rows; row++) {
+      meshes[row] = [];
+      for (let col = 0; col < cols; col++) {
+        const geoIndex = (row + col) % geometries.length;
+        const mesh = new THREE.Mesh(geometries[geoIndex], material);
+        mesh.position.set(
+          col * (meshSize + gutter.size),
+          0,
+          row * (meshSize + gutter.size)
+        );
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        mesh.initialRotation = {
+          x: Math.random() * Math.PI,
+          y: Math.random() * Math.PI,
+          z: Math.random() * Math.PI,
+        };
+        groupMesh.add(mesh);
+        meshes[row][col] = mesh;
       }
-      meshes = [];
+    }
 
-      for (let row = 0; row < numRows; row++) {
-        meshes[row] = [];
-        for (let col = 0; col < numCols; col++) {
-          const tmpl = getRandomTemplate();
-          const mesh = new THREE.Mesh(tmpl.geom, material);
-          mesh.castShadow = true;
-          mesh.receiveShadow = true;
-
-          mesh.position.set(
-            col + col * gutter.size,
-            0,
-            row + row * gutter.size
-          );
-          mesh.rotation.x = tmpl.rotationX;
-          mesh.rotation.y = tmpl.rotationY;
-          mesh.rotation.z = tmpl.rotationZ;
-
-          mesh.initialRotation = {
-            x: tmpl.rotationX,
-            y: tmpl.rotationY,
-            z: tmpl.rotationZ
-          };
-
-          groupMesh.add(mesh);
-          meshes[row][col] = mesh;
-        }
-      }
-
-      const centerX = (numCols - 1 + (numCols - 1) * gutter.size) * 0.5;
-      const centerZ = (numRows - 1 + (numRows - 1) * gutter.size) * 0.5;
-      groupMesh.position.set(-centerX, 0, -centerZ);
-    };
-
-    buildGrid(cols, rows);
+    const xMid = ((cols - 1) * (meshSize + gutter.size)) / 2;
+    const zMid = ((rows - 1) * (meshSize + gutter.size)) / 2;
+    groupMesh.position.set(-xMid, 0, -zMid);
     scene.add(groupMesh);
 
-    // --- INTERACTION & RAYCASTING ---
+    // Floor
+    const floorGeo = new THREE.PlaneGeometry(200, 200);
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.3 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = -0.5;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(
+      new THREE.Color(livePropsRef.current.ambientColor),
+      2.0
+    );
+    scene.add(ambientLight);
+
+    const spotLight = new THREE.SpotLight(
+      new THREE.Color(livePropsRef.current.spotColor),
+      800
+    );
+    spotLight.position.set(0, 40, 20);
+    spotLight.castShadow = true;
+    scene.add(spotLight);
+
+    const rectLight = new THREE.RectAreaLight(
+      new THREE.Color(livePropsRef.current.rectColor),
+      15,
+      40,
+      40
+    );
+    rectLight.position.set(0, 25, 0);
+    rectLight.rotation.x = radians(90);
+    scene.add(rectLight);
+
     const raycaster = new THREE.Raycaster();
-    const mouse3D = new THREE.Vector2(-999, -999);
+    const mouse3D = new THREE.Vector2(-1000, -1000);
 
-    const onPointerMove = (e) => {
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      const rect = mount.getBoundingClientRect();
-      mouse3D.x = ((clientX - rect.left) / width) * 2 - 1;
-      mouse3D.y = -((clientY - rect.top) / height) * 2 + 1;
-    };
-
-    const onResize = () => {
+    const onPointerMove = (e: MouseEvent) => {
       if (!mount) return;
-      width = mount.clientWidth || window.innerWidth;
-      height = mount.clientHeight || window.innerHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
-
-      // Rebuild grid if screen proportions changed
-      const newGrid = getFrustumGrid(width, height);
-      if (newGrid.cols !== cols || newGrid.rows !== rows) {
-        cols = newGrid.cols;
-        rows = newGrid.rows;
-        buildGrid(cols, rows);
-      }
+      const rect = mount.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      mouse3D.set(x, y);
     };
 
-    window.addEventListener('mousemove', onPointerMove, { passive: true });
-    window.addEventListener('touchmove', onPointerMove, { passive: true });
-    window.addEventListener('resize', onResize, { passive: true });
+    mount.addEventListener('mousemove', onPointerMove);
 
-    // Initial center trigger
-    onPointerMove({ clientX: width / 2, clientY: height / 2 });
-
-    // --- ANIMATION LOOP ---
-    let animationId;
+    let animationId: number;
 
     const animate = () => {
-      // Live update material and light colors from props
-      const {
-        backgroundColor: bgCol,
-        ambientColor: ambCol,
-        spotColor: spCol,
-        rectColor: rcCol,
-        meshColor: mCol,
-        metalness: met,
-        roughness: rough
-      } = livePropsRef.current;
+      animationId = requestAnimationFrame(animate);
 
-      if (scene.background.getHexString() !== new THREE.Color(bgCol).getHexString()) {
-        scene.background.set(bgCol);
-      }
-      if (ambientLight.color.getHexString() !== new THREE.Color(ambCol).getHexString()) {
-        ambientLight.color.set(ambCol);
-      }
-      if (spotLight.color.getHexString() !== new THREE.Color(spCol).getHexString()) {
-        spotLight.color.set(spCol);
-      }
-      if (rectLight.color.getHexString() !== new THREE.Color(rcCol).getHexString()) {
-        rectLight.color.set(rcCol);
-      }
-      if (material.color.getHexString() !== new THREE.Color(mCol).getHexString()) {
-        material.color.set(mCol);
-      }
-      if (material.metalness !== met) {
-        material.metalness = met;
-      }
-      if (material.roughness !== rough) {
-        material.roughness = rough;
-      }
+      const { backgroundColor: currentBg, ambientColor: currentAmb, spotColor: currentSpot, rectColor: currentRect, meshColor: currentMesh, metalness: currentMetal, roughness: currentRough } = livePropsRef.current;
 
-      // Raycasting for repulsive hover effect
+      scene.background.set(currentBg);
+      ambientLight.color.set(currentAmb);
+      spotLight.color.set(currentSpot);
+      rectLight.color.set(currentRect);
+      material.color.set(currentMesh);
+      material.metalness = currentMetal;
+      material.roughness = currentRough;
+
       raycaster.setFromCamera(mouse3D, camera);
       const intersects = raycaster.intersectObjects([floor]);
 
@@ -306,79 +220,66 @@ const Demo7 = ({ config = {} }) => {
               mesh.position.z + groupMesh.position.z
             );
 
-            // Exact repulsive physics formula from the original demo
-            const yDist = map(mouseDistance, 6, 0, 0, 10);
-            const targetY = yDist < 1 ? 1 : yDist;
+            const yDist = map(mouseDistance, 7, 0, 0, 8);
+            const targetY = yDist < 0 ? 0 : yDist;
 
             gsap.to(mesh.position, {
-              duration: 0.2,
+              duration: 0.25,
               y: targetY,
-              overwrite: 'auto'
+              overwrite: 'auto',
             });
 
-            const scaleFactor = mesh.position.y / 2.5;
-            const scale = scaleFactor < 1 ? 1 : scaleFactor;
-
+            const scaleFactor = 1 + targetY * 0.15;
             gsap.to(mesh.scale, {
-              duration: 0.4,
-              ease: 'expo.out',
-              x: scale,
-              y: scale,
-              z: scale,
-              overwrite: 'auto'
-            });
-
-            gsap.to(mesh.rotation, {
-              duration: 0.5,
-              ease: 'expo.out',
-              x: map(mesh.position.y, -1, 1, radians(45), mesh.initialRotation.x),
-              z: map(mesh.position.y, -1, 1, radians(-90), mesh.initialRotation.z),
-              y: map(mesh.position.y, -1, 1, radians(90), mesh.initialRotation.y),
-              overwrite: 'auto'
+              duration: 0.25,
+              x: scaleFactor,
+              y: scaleFactor,
+              z: scaleFactor,
+              overwrite: 'auto',
             });
           }
         }
       }
 
       renderer.render(scene, camera);
-      animationId = requestAnimationFrame(animate);
     };
 
     animate();
 
-    // --- CLEANUP ---
+    const onResize = () => {
+      if (!mount) return;
+      width = mount.clientWidth || 800;
+      height = mount.clientHeight || 500;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    };
+
+    window.addEventListener('resize', onResize);
+
     return () => {
-      window.removeEventListener('mousemove', onPointerMove);
-      window.removeEventListener('touchmove', onPointerMove);
       window.removeEventListener('resize', onResize);
-      cancelAnimationFrame(animationId);
-
-      if (mount && renderer.domElement && mount.contains(renderer.domElement)) {
-        mount.removeChild(renderer.domElement);
+      if (mount) {
+        mount.removeEventListener('mousemove', onPointerMove);
+        if (renderer.domElement && mount.contains(renderer.domElement)) {
+          mount.removeChild(renderer.domElement);
+        }
       }
-
-      renderer.dispose();
+      cancelAnimationFrame(animationId);
       boxGeo.dispose();
       coneGeo.dispose();
       torusGeo.dispose();
       floorGeo.dispose();
       material.dispose();
       floorMat.dispose();
+      renderer.dispose();
     };
   }, []);
 
   return (
     <div
       ref={mountRef}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: -1,
-        background: backgroundColor
-      }}
+      className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl ${className}`}
     />
   );
 };

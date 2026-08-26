@@ -1,136 +1,119 @@
 // @ts-nocheck
-// src/components/ThreeBackgrounds/Demo6.jsx
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const Demo6 = ({ config = {}, className = '' }) => {
-  const mountRef = useRef(null);
+export interface WaveSphereProps {
+  color1?: string;
+  color2?: string;
+  linesCount?: number;
+  speed?: number;
+  className?: string;
+  config?: any;
+}
+
+export const Demo6: React.FC<WaveSphereProps> = ({
+  color1 = '#fe0e55',
+  color2 = '#0077ff',
+  linesCount = 30,
+  speed = 1,
+  className = '',
+  config = {},
+}) => {
+  const mountRef = useRef<HTMLDivElement>(null);
+  const c1 = color1 || config?.color1 || '#fe0e55';
+  const c2 = color2 || config?.color2 || '#0077ff';
+  const count = linesCount || config?.linesCount || 30;
+  const spd = speed || config?.speed || 1;
 
   useEffect(() => {
     const mount = mountRef.current;
-    let width = mount.clientWidth;
-    let height = mount.clientHeight;
+    if (!mount) return;
 
-    // --- SCENE SETUP ---
+    let width = mount.clientWidth || 800;
+    let height = mount.clientHeight || 500;
+
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 280);
+    scene.background = new THREE.Color('#0c0c12');
+
+    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+    camera.position.set(0, 0, 320);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
-    
-    // FIX: Set background to original Dark Grey color
-    renderer.setClearColor(0x191919, 1);
-    
     mount.appendChild(renderer.domElement);
 
-    // --- SPHERE CREATION ---
     const sphereGroup = new THREE.Group();
     scene.add(sphereGroup);
 
-    // Two materials for slight color variation (Dark Grey & Indigo)
-    const mat1 = new THREE.LineBasicMaterial({ color: 0x4a4a4a });
-    const mat2 = new THREE.LineBasicMaterial({ color: 0x3F51B5 }); 
+    const mat1 = new THREE.LineBasicMaterial({ color: new THREE.Color(c1), linewidth: 2 });
+    const mat2 = new THREE.LineBasicMaterial({ color: new THREE.Color(c2), linewidth: 2 });
 
     const radius = 100;
-    const lines = 50;
-    const dots = 50;
+    const verticesAmount = 64;
 
-    for (let i = 0; i < lines; i++) {
-      // Create BufferGeometry
+    const baseGeometryData = [];
+    for (let i = 0; i <= verticesAmount; i++) {
+      const angle = (i / verticesAmount) * Math.PI * 2;
+      baseGeometryData.push({
+        x: Math.cos(angle),
+        z: Math.sin(angle),
+      });
+    }
+
+    for (let j = 0; j < count; j++) {
       const geometry = new THREE.BufferGeometry();
-      const positions = new Float32Array(dots * 3);
-      
-      // Randomize ring properties
-      const lineRadius = Math.floor(radius + (Math.random() - 0.5) * (radius * 0.2));
-      const speed = Math.random() * 300 + 250;
-      
-      // We need to store the initial X positions to calculate the sine wave frame-by-frame
-      // without accumulating errors or needing to read back from the GPU buffer.
-      const initialX = [];
-
-      // Initialize dots
-      for (let j = 0; j < dots; j++) {
-        // x calculation: distrubute dots across the diameter
-        const x = ((j / dots) * lineRadius * 2) - lineRadius;
-        initialX.push(x);
-        
-        positions[j * 3] = x;     // x
-        positions[j * 3 + 1] = 0; // y (will be animated)
-        positions[j * 3 + 2] = 0; // z
-      }
-
+      const positions = new Float32Array((verticesAmount + 1) * 3);
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-      // Create Line
-      const material = (Math.random() > 0.2) ? mat1 : mat2;
-      const line = new THREE.Line(geometry, material);
-      
-      // Store props for animation
-      line.userData = {
-        radius: lineRadius,
-        speed: speed,
-        dots: dots,
-        initialX: initialX // Save for reference in animation loop
-      };
-
-      // Random initial rotation to create the sphere shape
-      line.rotation.x = Math.random() * Math.PI;
-      line.rotation.y = Math.random() * Math.PI;
-      line.rotation.z = Math.random() * Math.PI;
-
+      const line = new THREE.Line(geometry, j % 2 === 0 ? mat1 : mat2);
+      line.userData = { y: (j / count) * radius * 2 };
       sphereGroup.add(line);
     }
 
-    // --- INTERACTION ---
-    const handleResize = () => {
-      width = mount.clientWidth;
-      height = mount.clientHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
+    let mouseX = 0;
+    let mouseY = 0;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!mount) return;
+      const rect = mount.getBoundingClientRect();
+      mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouseY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
     };
 
-    window.addEventListener('resize', handleResize);
+    mount.addEventListener('mousemove', handleMouseMove);
 
-    // --- ANIMATION LOOP ---
     const start = Date.now();
-    let animationId;
+    let animationId: number;
 
     const animate = () => {
       const now = Date.now() - start;
 
-      // Update Lines
-      sphereGroup.children.forEach(line => {
-        const { radius, speed, dots, initialX } = line.userData;
+      sphereGroup.rotation.y += 0.002 * spd;
+      sphereGroup.rotation.x += (mouseY * 0.5 - sphereGroup.rotation.x) * 0.05;
+      sphereGroup.rotation.z += (mouseX * 0.5 - sphereGroup.rotation.z) * 0.05;
+
+      sphereGroup.children.forEach((line) => {
+        const data = line.userData;
+        data.y += 0.4 * spd;
+        if (data.y > radius * 2) {
+          data.y = 0;
+        }
+
+        const val = data.y * (2 * radius - data.y);
+        const radiusHeight = Math.sqrt(val > 0 ? val : 0);
         const positions = line.geometry.attributes.position.array;
 
-        for (let j = 0; j < dots; j++) {
-          const ix = j * 3;     // Index for X
-          const iy = j * 3 + 1; // Index for Y
-          
-          // Read stable X from our JS array
-          const x = initialX[j];
-          
-          // Wave Logic
-          // ratio ensures the wave amplitude tapers off at the edges of the circle (where x is large)
-          const ratio = 1 - ((radius - Math.abs(x)) / radius);
-          
-          // Sine wave calculation
-          const y = Math.sin(now / speed + j * 0.15) * 12 * ratio;
+        for (let i = 0; i <= verticesAmount; i++) {
+          const base = baseGeometryData[i];
+          const wave = Math.sin(i * 0.2 + now * 0.003 * spd + data.y * 0.05) * 8;
+          const finalRadius = radiusHeight + wave;
 
-          // Update Y in the buffer
-          positions[iy] = y;
+          positions[i * 3] = base.x * finalRadius;
+          positions[i * 3 + 1] = data.y - radius;
+          positions[i * 3 + 2] = base.z * finalRadius;
         }
-        
-        // Flag geometry for update
+
         line.geometry.attributes.position.needsUpdate = true;
       });
-
-      // Rotate entire sphere slowly
-      sphereGroup.rotation.y = (now * 0.0001);
-      sphereGroup.rotation.x = (-now * 0.0001);
 
       renderer.render(scene, camera);
       animationId = requestAnimationFrame(animate);
@@ -138,31 +121,37 @@ const Demo6 = ({ config = {}, className = '' }) => {
 
     animate();
 
-    // --- CLEANUP ---
+    const handleResize = () => {
+      if (!mount) return;
+      width = mount.clientWidth || 800;
+      height = mount.clientHeight || 500;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
       window.removeEventListener('resize', handleResize);
+      if (mount) {
+        mount.removeEventListener('mousemove', handleMouseMove);
+        if (renderer.domElement && mount.contains(renderer.domElement)) {
+          mount.removeChild(renderer.domElement);
+        }
+      }
       cancelAnimationFrame(animationId);
-      if (mount) mount.removeChild(renderer.domElement);
-      
-      // Memory cleanup
-      sphereGroup.children.forEach(c => c.geometry.dispose());
+      sphereGroup.children.forEach((c) => c.geometry.dispose());
       mat1.dispose();
       mat2.dispose();
+      renderer.dispose();
     };
-  }, []);
+  }, [c1, c2, count, spd]);
 
   return (
-    <div 
-      ref={mountRef} 
-      style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        width: '100vw', 
-        height: '100vh', 
-        zIndex: -1,
-        background: '#191919' 
-      }} 
+    <div
+      ref={mountRef}
+      className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl bg-[#0c0c12] ${className}`}
     />
   );
 };
