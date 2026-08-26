@@ -1,6 +1,7 @@
 import React from 'react';
 import { PropControl } from '../../registry/types';
 import { Sliders, RotateCcw } from 'lucide-react';
+import { SiddColorPicker } from '../ui/SiddColorPicker';
 
 export interface LiveControlsProps {
   controls: PropControl[];
@@ -29,7 +30,7 @@ export const LiveControls: React.FC<LiveControlsProps> = ({
         <button
           type="button"
           onClick={onReset}
-          className="flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition-colors"
+          className="flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition-colors cursor-pointer"
           title="Reset to default props"
         >
           <RotateCcw size={12} />
@@ -65,20 +66,11 @@ export const LiveControls: React.FC<LiveControlsProps> = ({
             return (
               <div key={control.name} className="space-y-1.5 rounded-xl border border-zinc-900 bg-zinc-900/40 p-3">
                 <span className="text-xs font-medium text-zinc-300 block">{control.label}</span>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={val}
-                    onChange={(e) => onChange(control.name, e.target.value)}
-                    className="h-7 w-7 rounded-lg border border-zinc-700 bg-transparent cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={val}
-                    onChange={(e) => onChange(control.name, e.target.value)}
-                    className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2.5 py-1 text-xs font-mono text-zinc-200 focus:border-indigo-500 focus:outline-none"
-                  />
-                </div>
+                <SiddColorPicker
+                  value={val}
+                  onChange={(hex) => onChange(control.name, hex)}
+                  label={control.label}
+                />
               </div>
             );
           }
