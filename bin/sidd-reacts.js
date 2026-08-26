@@ -48,7 +48,7 @@ const COMPONENTS = {
   'soundwave-eq-button': { name: 'Soundwave / Audio Equalizer Reactive Button', file: 'SoundwaveEqButton.tsx', section: 'buttons', dir: 'soundwave-eq-button', deps: ['framer-motion'] },
   'floating-levitation-button': { name: 'Magnetic Floating Levitation Button', file: 'FloatingLevitationButton.tsx', section: 'buttons', dir: 'floating-levitation-button', deps: ['framer-motion'] },
 
-  // Backgrounds (8)
+  // Backgrounds (19)
   'aurora-background': { name: 'Aurora Ambient Background', file: 'AuroraBackground.tsx', section: 'backgrounds', dir: 'aurora-background', deps: [] },
   'particle-vortex': { name: 'Interactive Particle Vortex Canvas', file: 'ParticleVortex.tsx', section: 'backgrounds', dir: 'particle-vortex', deps: [] },
   'fluid-liquid-mesh': { name: 'Interactive 3D Fluid Liquid Mesh', file: 'FluidLiquidMesh.tsx', section: 'backgrounds', dir: 'fluid-liquid-mesh', deps: [] },
@@ -57,6 +57,17 @@ const COMPONENTS = {
   'voronoi-cell-network': { name: 'Abstract Voronoi Cell Network', file: 'VoronoiCellNetwork.tsx', section: 'backgrounds', dir: 'voronoi-cell-network', deps: [] },
   'particle-sphere-3d': { name: 'Dynamic 3D Particle Constellation / Sphere', file: 'ParticleSphere3D.tsx', section: 'backgrounds', dir: 'particle-sphere-3d', deps: [] },
   'hyperspeed-tunnel': { name: 'Hyperspeed Warp Tunnel', file: 'HyperspeedTunnel.tsx', section: 'backgrounds', dir: 'hyperspeed-tunnel', deps: [] },
+  'flat-surface-mesh': { name: 'Flat Surface Shader (FSS Mesh)', file: 'BackgroundFSS.tsx', section: 'backgrounds', dir: 'flat-surface-mesh', deps: ['three'] },
+  'galaxy-demo1': { name: 'Galaxy Starfield (Demo 1)', file: 'Demo1.tsx', section: 'backgrounds', dir: 'galaxy-demo1', deps: ['three', 'gsap'] },
+  'interactive-sphere-demo2': { name: 'Interactive Particle Sphere (Demo 2)', file: 'Demo2.tsx', section: 'backgrounds', dir: 'interactive-sphere-demo2', deps: ['three'] },
+  'silk-waves-demo3': { name: 'Silk Waves (Demo 3)', file: 'Demo3.tsx', section: 'backgrounds', dir: 'silk-waves-demo3', deps: ['three'] },
+  'scanning-lines-demo4': { name: 'Scanning Perlin Lines (Demo 4)', file: 'Demo4.tsx', section: 'backgrounds', dir: 'scanning-lines-demo4', deps: ['three'] },
+  'ballpit-3d': { name: 'Interactive 3D Ballpit', file: 'Ballpit.tsx', section: 'backgrounds', dir: 'ballpit-3d', deps: ['three'] },
+  'wave-sphere-demo6': { name: 'Wave Sphere (Demo 6)', file: 'Demo6.tsx', section: 'backgrounds', dir: 'wave-sphere-demo6', deps: ['three'] },
+  'interactive-repulsion-demo7': { name: 'Interactive Box Repulsion Grid (Demo 7)', file: 'Demo7.tsx', section: 'backgrounds', dir: 'interactive-repulsion-demo7', deps: ['three', 'gsap'] },
+  'fog-effect': { name: 'Volumetric Fog Effect (Vanta)', file: 'Fog.tsx', section: 'backgrounds', dir: 'fog-effect', deps: ['three'] },
+  'waves-vanta': { name: 'Ocean Waves (Vanta)', file: 'Waves.tsx', section: 'backgrounds', dir: 'waves-vanta', deps: ['three'] },
+  'pixel-blast-canvas': { name: 'Pixel Blast Dither Canvas', file: 'PixelBlast.tsx', section: 'backgrounds', dir: 'pixel-blast-canvas', deps: ['three', 'postprocessing'] },
 
   // Cards & Containers (8)
   'spotlight-card': { name: 'Spotlight 3D Card', file: 'SpotlightCard.tsx', section: 'cards', dir: 'spotlight-card', deps: ['framer-motion', 'lucide-react', 'clsx', 'tailwind-merge'] },

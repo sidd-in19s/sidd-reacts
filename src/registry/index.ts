@@ -11,6 +11,7 @@ import IridescentGlassCard from './components/cards/iridescent-glass-card/Irides
 import HyperspeedTunnel from './components/backgrounds/hyperspeed-tunnel/HyperspeedTunnel';
 import { NEW_COMPONENTS } from './newComponents';
 import { BUTTON_COMPONENTS } from './buttonComponents';
+import { PORTFOLIO_BACKGROUNDS } from './portfolioBackgrounds';
 
 export const CATEGORIES: CategoryInfo[] = [
   {
@@ -2453,5 +2454,10 @@ export function HyperspeedTunnel({
   },
 ];
 
-export const REGISTRY: RegistryItem[] = [...INITIAL_REGISTRY, ...NEW_COMPONENTS, ...BUTTON_COMPONENTS];
+export const REGISTRY: RegistryItem[] = [
+  ...INITIAL_REGISTRY,
+  ...NEW_COMPONENTS,
+  ...BUTTON_COMPONENTS,
+  ...PORTFOLIO_BACKGROUNDS,
+];
 
