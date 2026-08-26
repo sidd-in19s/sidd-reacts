@@ -3,7 +3,9 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 
+const radians = (degrees) => (degrees * Math.PI) / 180;
 const distance = (x1, y1, x2, y2) => Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 const map = (value, start1, stop1, start2, stop2) =>
   ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
@@ -21,25 +23,26 @@ export interface BoxRepulsionProps {
 }
 
 export const Demo7: React.FC<BoxRepulsionProps> = ({
-  meshColor = '#a855f7',
-  ambientColor = '#2900af',
-  spotColor = '#00f0ff',
-  rectColor = '#ec4899',
-  backgroundColor = '#0c0c12',
-  metalness = 0.45,
-  roughness = 0.2,
+  // Default to Cyber Neon preset as requested
+  meshColor = '#00f0ff',
+  ambientColor = '#0a00b8',
+  spotColor = '#00ffff',
+  rectColor = '#ff0066',
+  backgroundColor = '#070a14',
+  metalness = 0.72,
+  roughness = 0.12,
   className = '',
   config = {},
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
-  const mCol = meshColor || config?.meshColor || config?.demo7MeshColor || '#a855f7';
-  const ambCol = ambientColor || config?.ambientColor || config?.demo7AmbientColor || '#2900af';
-  const spCol = spotColor || config?.spotColor || config?.demo7SpotColor || '#00f0ff';
-  const rcCol = rectColor || config?.rectColor || config?.demo7RectColor || '#ec4899';
-  const bgCol = backgroundColor || config?.backgroundColor || config?.demo7BgColor || '#0c0c12';
-  const met = metalness !== undefined ? metalness : (config?.metalness ?? config?.demo7Metalness ?? 0.45);
-  const rough = roughness !== undefined ? roughness : (config?.roughness ?? config?.demo7Roughness ?? 0.2);
+  const mCol = meshColor || config?.meshColor || config?.demo7MeshColor || '#00f0ff';
+  const ambCol = ambientColor || config?.ambientColor || config?.demo7AmbientColor || '#0a00b8';
+  const spCol = spotColor || config?.spotColor || config?.demo7SpotColor || '#00ffff';
+  const rcCol = rectColor || config?.rectColor || config?.demo7RectColor || '#ff0066';
+  const bgCol = backgroundColor || config?.backgroundColor || config?.demo7BgColor || '#070a14';
+  const met = metalness !== undefined ? metalness : (config?.metalness ?? config?.demo7Metalness ?? 0.72);
+  const rough = roughness !== undefined ? roughness : (config?.roughness ?? config?.demo7Roughness ?? 0.12);
 
   const livePropsRef = useRef({
     backgroundColor: bgCol,
@@ -70,126 +73,196 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     let width = mount.clientWidth || 800;
     let height = mount.clientHeight || 500;
 
+    try {
+      RectAreaLightUniformsLib.init();
+    } catch (e) {
+      // already initialized
+    }
+
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(livePropsRef.current.backgroundColor);
 
-    // Position camera with beautiful perspective viewing the 3D grid
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
-    camera.position.set(0, 24, 18);
+    const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
+    camera.position.set(0, 30, 0);
     camera.lookAt(0, 0, 0);
+    scene.add(camera);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.NoToneMapping;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     mount.appendChild(renderer.domElement);
 
-    // Grid Setup
-    const gutter = { size: 1.1 };
-    const meshSize = 1.5;
-    const groupMesh = new THREE.Object3D();
-    const rows = 9;
-    const cols = 15;
-    const meshes = [];
+    // Lights matching original portfolio
+    const ambientLight = new THREE.AmbientLight(new THREE.Color(livePropsRef.current.ambientColor), 1.5);
+    scene.add(ambientLight);
 
-    const boxGeo = new RoundedBoxGeometry(meshSize, meshSize, meshSize, 4, 0.15);
-    const coneGeo = new THREE.ConeGeometry(meshSize * 0.7, meshSize * 1.2, 32);
-    const torusGeo = new THREE.TorusGeometry(meshSize * 0.5, 0.25, 16, 32);
+    const spotLight = new THREE.SpotLight(new THREE.Color(livePropsRef.current.spotColor), 3.0, 1000);
+    spotLight.position.set(0, 27, 0);
+    spotLight.decay = 0;
+    spotLight.castShadow = true;
+    spotLight.shadow.mapSize.width = 1024;
+    spotLight.shadow.mapSize.height = 1024;
+    spotLight.shadow.camera.near = 10;
+    spotLight.shadow.camera.far = 50;
+    spotLight.shadow.bias = -0.001;
+    scene.add(spotLight);
 
-    const geometries = [boxGeo, coneGeo, torusGeo];
+    const rectLight = new THREE.RectAreaLight(new THREE.Color(livePropsRef.current.rectColor), 12.0, 2000, 2000);
+    rectLight.position.set(5, 50, 50);
+    rectLight.lookAt(0, 0, 0);
+    scene.add(rectLight);
+
+    const pLight1 = new THREE.PointLight(0xfff000, 0.6, 1000);
+    pLight1.position.set(0, 10, -100);
+    pLight1.decay = 0;
+    scene.add(pLight1);
+
+    const pLight2 = new THREE.PointLight(0xfff000, 0.6, 1000);
+    pLight2.position.set(100, 10, 0);
+    pLight2.decay = 0;
+    scene.add(pLight2);
+
+    const pLight3 = new THREE.PointLight(0x00ff00, 0.5, 1000);
+    pLight3.position.set(20, 5, 20);
+    pLight3.decay = 0;
+    scene.add(pLight3);
+
+    // Floor for shadows & raycasting
+    const floorGeo = new THREE.PlaneGeometry(2000, 2000);
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.3 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.position.y = 0;
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // Geometries & Template Variations from original portfolio
+    const boxGeo = new RoundedBoxGeometry(1, 1, 1, 4, 0.1);
+    const coneGeo = new THREE.ConeGeometry(0.5, 1, 32);
+    const torusGeo = new THREE.TorusGeometry(0.4, 0.25, 16, 32);
+
+    const geometryTemplates = [
+      { geom: boxGeo, rotationX: 0, rotationY: 0, rotationZ: 0 },
+      { geom: boxGeo, rotationX: 0, rotationY: radians(45), rotationZ: 0 },
+      { geom: boxGeo, rotationX: radians(45), rotationY: 0, rotationZ: 0 },
+      { geom: torusGeo, rotationX: radians(90), rotationY: 0, rotationZ: 0 },
+      { geom: coneGeo, rotationX: 0, rotationY: 0, rotationZ: radians(-180) },
+    ];
+
+    const getRandomTemplate = () =>
+      geometryTemplates[Math.floor(Math.random() * geometryTemplates.length)];
 
     const material = new THREE.MeshPhysicalMaterial({
       color: new THREE.Color(livePropsRef.current.meshColor),
       metalness: livePropsRef.current.metalness,
       roughness: livePropsRef.current.roughness,
-      clearcoat: 1.0,
-      clearcoatRoughness: 0.15,
+      emissive: new THREE.Color('#000000'),
+      clearcoat: 0.5,
+      clearcoatRoughness: 0.1,
     });
 
-    for (let row = 0; row < rows; row++) {
-      meshes[row] = [];
-      for (let col = 0; col < cols; col++) {
-        const geoIndex = (row + col) % geometries.length;
-        const mesh = new THREE.Mesh(geometries[geoIndex], material);
-        mesh.position.set(
-          col * (meshSize + gutter.size),
-          0,
-          row * (meshSize + gutter.size)
-        );
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        mesh.rotation.x = Math.PI / 6;
-        groupMesh.add(mesh);
-        meshes[row][col] = mesh;
-      }
-    }
+    const gutter = { size: 1.2 };
+    const stepSize = 1 + gutter.size;
 
-    const xMid = ((cols - 1) * (meshSize + gutter.size)) / 2;
-    const zMid = ((rows - 1) * (meshSize + gutter.size)) / 2;
-    groupMesh.position.set(-xMid, 0, -zMid);
-    scene.add(groupMesh);
-
-    // Floor Plane for shadow & raycasting
-    const floorGeo = new THREE.PlaneGeometry(150, 150);
-    const floorMat = new THREE.ShadowMaterial({ opacity: 0.25 });
-    const floor = new THREE.Mesh(floorGeo, floorMat);
-    floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -0.5;
-    floor.receiveShadow = true;
-    scene.add(floor);
-
-    // Multi-Light Studio Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
-    scene.add(ambientLight);
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
-    dirLight.position.set(20, 35, 20);
-    dirLight.castShadow = true;
-    scene.add(dirLight);
-
-    const spotLight = new THREE.PointLight(
-      new THREE.Color(livePropsRef.current.spotColor),
-      80,
-      60
-    );
-    spotLight.position.set(0, 20, 10);
-    scene.add(spotLight);
-
-    const fillLight = new THREE.PointLight(
-      new THREE.Color(livePropsRef.current.rectColor),
-      60,
-      60
-    );
-    fillLight.position.set(-15, 15, -10);
-    scene.add(fillLight);
-
-    const raycaster = new THREE.Raycaster();
-    const mouse3D = new THREE.Vector2(-1000, -1000);
-
-    const onPointerMove = (e: MouseEvent) => {
-      if (!mount) return;
-      const rect = mount.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / rect.height) * 2 + 1);
-      mouse3D.set(x, y);
+    const getFrustumGrid = (w, h) => {
+      const vHeight = 2 * Math.tan((45 * Math.PI) / 360) * 30;
+      const vWidth = vHeight * (w / h);
+      const c = Math.max(7, Math.floor((vWidth - 2) / stepSize));
+      const r = Math.max(5, Math.floor((vHeight - 2) / stepSize));
+      return { cols: c, rows: r };
     };
 
-    mount.addEventListener('mousemove', onPointerMove);
+    let { cols, rows } = getFrustumGrid(width, height);
+    let meshes = [];
+    const groupMesh = new THREE.Object3D();
+
+    const buildGrid = (numCols, numRows) => {
+      while (groupMesh.children.length > 0) {
+        groupMesh.remove(groupMesh.children[0]);
+      }
+      meshes = [];
+
+      for (let row = 0; row < numRows; row++) {
+        meshes[row] = [];
+        for (let col = 0; col < numCols; col++) {
+          const tmpl = getRandomTemplate();
+          const mesh = new THREE.Mesh(tmpl.geom, material);
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+
+          mesh.position.set(
+            col + col * gutter.size,
+            0,
+            row + row * gutter.size
+          );
+          mesh.rotation.x = tmpl.rotationX;
+          mesh.rotation.y = tmpl.rotationY;
+          mesh.rotation.z = tmpl.rotationZ;
+
+          mesh.initialRotation = {
+            x: tmpl.rotationX,
+            y: tmpl.rotationY,
+            z: tmpl.rotationZ,
+          };
+
+          groupMesh.add(mesh);
+          meshes[row][col] = mesh;
+        }
+      }
+
+      const centerX = (numCols - 1 + (numCols - 1) * gutter.size) * 0.5;
+      const centerZ = (numRows - 1 + (numRows - 1) * gutter.size) * 0.5;
+      groupMesh.position.set(-centerX, 0, -centerZ);
+    };
+
+    buildGrid(cols, rows);
+    scene.add(groupMesh);
+
+    const raycaster = new THREE.Raycaster();
+    const mouse3D = new THREE.Vector2(-999, -999);
+
+    const onPointerMove = (e: MouseEvent | TouchEvent) => {
+      if (!mount) return;
+      const rect = mount.getBoundingClientRect();
+      const clientX = 'touches' in e && e.touches[0] ? e.touches[0].clientX : (e as MouseEvent).clientX;
+      const clientY = 'touches' in e && e.touches[0] ? e.touches[0].clientY : (e as MouseEvent).clientY;
+      mouse3D.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      mouse3D.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+    };
+
+    mount.addEventListener('mousemove', onPointerMove, { passive: true });
+    mount.addEventListener('touchmove', onPointerMove, { passive: true });
+
+    onPointerMove({ clientX: width / 2, clientY: height / 2 });
 
     let animationId: number;
 
     const animate = () => {
-      animationId = requestAnimationFrame(animate);
+      const {
+        backgroundColor: bg,
+        ambientColor: amb,
+        spotColor: sp,
+        rectColor: rc,
+        meshColor: mc,
+        metalness: metVal,
+        roughness: roughVal,
+      } = livePropsRef.current;
 
-      const { backgroundColor: currentBg, spotColor: currentSpot, rectColor: currentRect, meshColor: currentMesh, metalness: currentMetal, roughness: currentRough } = livePropsRef.current;
-
-      scene.background.set(currentBg);
-      spotLight.color.set(currentSpot);
-      fillLight.color.set(currentRect);
-      material.color.set(currentMesh);
-      material.metalness = currentMetal;
-      material.roughness = currentRough;
+      scene.background.set(bg);
+      ambientLight.color.set(amb);
+      spotLight.color.set(sp);
+      rectLight.color.set(rc);
+      material.color.set(mc);
+      material.metalness = metVal;
+      material.roughness = roughVal;
 
       raycaster.setFromCamera(mouse3D, camera);
       const intersects = raycaster.intersectObjects([floor]);
@@ -209,27 +282,33 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
               mesh.position.z + groupMesh.position.z
             );
 
-            const yDist = map(mouseDistance, 8, 0, 0, 6.5);
-            const targetY = yDist < 0 ? 0 : yDist;
+            const yDist = map(mouseDistance, 6, 0, 0, 10);
+            const targetY = yDist < 1 ? 1 : yDist;
 
             gsap.to(mesh.position, {
-              duration: 0.3,
+              duration: 0.2,
               y: targetY,
               overwrite: 'auto',
             });
 
-            const scaleFactor = 1 + targetY * 0.18;
+            const scaleFactor = mesh.position.y / 2.5;
+            const scale = scaleFactor < 1 ? 1 : scaleFactor;
+
             gsap.to(mesh.scale, {
-              duration: 0.3,
-              x: scaleFactor,
-              y: scaleFactor,
-              z: scaleFactor,
+              duration: 0.4,
+              ease: 'expo.out',
+              x: scale,
+              y: scale,
+              z: scale,
               overwrite: 'auto',
             });
 
             gsap.to(mesh.rotation, {
-              duration: 0.4,
-              y: targetY * 0.5,
+              duration: 0.5,
+              ease: 'expo.out',
+              x: map(mesh.position.y, -1, 1, radians(45), mesh.initialRotation.x),
+              z: map(mesh.position.y, -1, 1, radians(-90), mesh.initialRotation.z),
+              y: map(mesh.position.y, -1, 1, radians(90), mesh.initialRotation.y),
               overwrite: 'auto',
             });
           }
@@ -237,6 +316,7 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       }
 
       renderer.render(scene, camera);
+      animationId = requestAnimationFrame(animate);
     };
 
     animate();
@@ -248,14 +328,22 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
+
+      const newGrid = getFrustumGrid(width, height);
+      if (newGrid.cols !== cols || newGrid.rows !== rows) {
+        cols = newGrid.cols;
+        rows = newGrid.rows;
+        buildGrid(cols, rows);
+      }
     };
 
-    window.addEventListener('resize', onResize);
+    window.addEventListener('resize', onResize, { passive: true });
 
     return () => {
       window.removeEventListener('resize', onResize);
       if (mount) {
         mount.removeEventListener('mousemove', onPointerMove);
+        mount.removeEventListener('touchmove', onPointerMove);
         if (renderer.domElement && mount.contains(renderer.domElement)) {
           mount.removeChild(renderer.domElement);
         }
@@ -275,6 +363,7 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     <div
       ref={mountRef}
       className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl ${className}`}
+      style={{ background: bgCol }}
     />
   );
 };

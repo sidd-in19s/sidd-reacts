@@ -352,7 +352,16 @@ class BallpitPhysics {
       posI.fromArray(positionData, base);
       velB.fromArray(velocityData, base);
 
-      velB.y -= timeData.delta * config.gravity * sizeData[idx] * 4;
+      // Gentle float & slow gravity drop (scaled smoothly so low gravity floats gracefully)
+      const gravFactor = timeData.delta * (config.gravity * 0.35) * sizeData[idx];
+      velB.y -= gravFactor;
+
+      // Micro float oscillation when gravity is low
+      if (config.gravity < 0.3) {
+        const floatWave = Math.sin(timeData.elapsed * 1.8 + idx * 0.5) * 0.0006 * (1 - config.gravity * 3);
+        velB.y += floatWave;
+      }
+
       velB.multiplyScalar(config.friction);
       velB.clampLength(0, config.maxVelocity);
 
@@ -502,7 +511,7 @@ const DEFAULT_CONFIG = {
   minSize: 0.5,
   maxSize: 1.1,
   size0: 1.2,
-  gravity: 0.5,
+  gravity: 0.1,
   friction: 0.9975,
   wallBounce: 0.95,
   maxVelocity: 0.15,
@@ -706,7 +715,7 @@ export const Ballpit: React.FC<BallpitProps> = ({
   className = '',
   followCursor = true,
   count = 100,
-  gravity = 0.5,
+  gravity = 0.1,
   friction = 0.9975,
   wallBounce = 0.95,
   colors,

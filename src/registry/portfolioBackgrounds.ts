@@ -168,7 +168,7 @@ export default function Demo() {
     cliCommand: 'npx sidd-reacts add ballpit-3d',
     propsConfig: [
       { name: 'count', label: 'Ball Count', type: 'slider', defaultValue: 100, min: 20, max: 250, step: 10 },
-      { name: 'gravity', label: 'Gravity', type: 'slider', defaultValue: 0.5, min: 0, max: 2, step: 0.05 },
+      { name: 'gravity', label: 'Gravity', type: 'slider', defaultValue: 0.1, min: 0, max: 1, step: 0.01 },
       { name: 'friction', label: 'Friction', type: 'slider', defaultValue: 0.9975, min: 0.95, max: 0.9999, step: 0.0005 },
       { name: 'wallBounce', label: 'Wall Bounce', type: 'slider', defaultValue: 0.95, min: 0.5, max: 1.1, step: 0.05 },
       { name: 'color1', label: 'Ball Color 1', type: 'color', defaultValue: '#4f46e5' },
@@ -180,7 +180,7 @@ export default function Demo() {
     ],
     apiDocs: [
       { name: 'count', type: 'number', default: '100', description: 'Number of spheres in the ballpit' },
-      { name: 'gravity', type: 'number', default: '0.5', description: 'Controls the gravity affecting the balls' },
+      { name: 'gravity', type: 'number', default: '0.1', description: 'Controls the gravity affecting the balls' },
       { name: 'friction', type: 'number', default: '0.9975', description: 'Sets the friction applied to ball movement' },
       { name: 'wallBounce', type: 'number', default: '0.95', description: 'Determines how much balls bounce off walls' },
       { name: 'colors', type: 'string[]', default: "['#4f46e5', '#ffffff', '#ea580c', '#22c55e']", description: 'Colors of the balls' },
@@ -195,7 +195,7 @@ export default function Demo() {
     <div style={{ position: 'relative', overflow: 'hidden', minHeight: '500px', width: '100%' }}>
       <Ballpit
         count={100}
-        gravity={0.5}
+        gravity={0.1}
         friction={0.9975}
         wallBounce={0.95}
         followCursor={true}
@@ -205,7 +205,7 @@ export default function Demo() {
   );
 }`,
     codeJSX: `// JSX version available`,
-    demoUsage: `<Ballpit count={100} gravity={0.5} colors={['#4f46e5', '#ffffff', '#ea580c', '#22c55e']} />`,
+    demoUsage: `<Ballpit count={100} gravity={0.1} colors={['#4f46e5', '#ffffff', '#ea580c', '#22c55e']} />`,
   },
 
   {
@@ -246,27 +246,37 @@ export default function Demo() {
     dependencies: ['three', 'gsap'],
     cliCommand: 'npx sidd-reacts add interactive-repulsion-demo7',
     propsConfig: [
-      { name: 'meshColor', label: 'Mesh Geometry Color', type: 'color', defaultValue: '#ff00ff' },
-      { name: 'ambientColor', label: 'Ambient Light Color', type: 'color', defaultValue: '#2900af' },
-      { name: 'spotColor', label: 'Spotlight Beam Color', type: 'color', defaultValue: '#e000ff' },
-      { name: 'rectColor', label: 'Rectangular Light Color', type: 'color', defaultValue: '#0077ff' },
-      { name: 'metalness', label: 'Surface Metalness', type: 'slider', defaultValue: 0.58, min: 0, max: 1, step: 0.05 },
-      { name: 'roughness', label: 'Surface Roughness', type: 'slider', defaultValue: 0.18, min: 0, max: 1, step: 0.05 },
-      { name: 'backgroundColor', label: 'Scene Floor Tint', type: 'color', defaultValue: '#121218' },
+      { name: 'meshColor', label: 'Mesh Geometry Color', type: 'color', defaultValue: '#00f0ff' },
+      { name: 'ambientColor', label: 'Ambient Light Color', type: 'color', defaultValue: '#0a00b8' },
+      { name: 'spotColor', label: 'Spotlight Beam Color', type: 'color', defaultValue: '#00ffff' },
+      { name: 'rectColor', label: 'Rectangular Light Color', type: 'color', defaultValue: '#ff0066' },
+      { name: 'metalness', label: 'Surface Metalness', type: 'slider', defaultValue: 0.72, min: 0, max: 1, step: 0.02 },
+      { name: 'roughness', label: 'Surface Roughness', type: 'slider', defaultValue: 0.12, min: 0, max: 1, step: 0.02 },
+      { name: 'backgroundColor', label: 'Scene Floor Tint', type: 'color', defaultValue: '#070a14' },
     ],
     apiDocs: [
-      { name: 'meshColor', type: 'string', default: "'#ff00ff'", description: 'Color of the 3D repulsive cubes and prisms' },
-      { name: 'spotColor', type: 'string', default: "'#e000ff'", description: 'Color of the overhead spotlight' },
+      { name: 'meshColor', type: 'string', default: "'#00f0ff'", description: 'Color of the 3D repulsive cubes and prisms' },
+      { name: 'spotColor', type: 'string', default: "'#00ffff'", description: 'Color of the overhead spotlight' },
     ],
     component: Demo7,
     codeTSX: `import React from 'react';
 import { Demo7 } from './Demo7';
 
 export default function Demo() {
-  return <Demo7 meshColor="#ff00ff" ambientColor="#2900af" spotColor="#e000ff" />;
+  return (
+    <Demo7
+      meshColor="#00f0ff"
+      ambientColor="#0a00b8"
+      spotColor="#00ffff"
+      rectColor="#ff0066"
+      backgroundColor="#070a14"
+      metalness={0.72}
+      roughness={0.12}
+    />
+  );
 }`,
     codeJSX: `// JSX version available`,
-    demoUsage: `<Demo7 meshColor="#ff00ff" spotColor="#e000ff" />`,
+    demoUsage: `<Demo7 meshColor="#00f0ff" spotColor="#00ffff" />`,
   },
 
   {
