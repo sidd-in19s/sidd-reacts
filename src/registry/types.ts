@@ -32,7 +32,7 @@ export interface RegistryItem {
   name: string;
   category: ComponentCategory;
   description: string;
-  badge?: 'NEW' | 'HOT' | 'POPULAR' | 'CANVAS' | 'SPRING';
+  badge?: 'NEW' | 'HOT' | 'POPULAR' | 'CANVAS' | 'SPRING' | 'PRO';
   dependencies: string[];
   cliCommand: string;
   propsConfig: PropControl[];

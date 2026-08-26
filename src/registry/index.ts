@@ -10,6 +10,7 @@ import FloatingDock from './components/floating-dock/FloatingDock';
 import IridescentGlassCard from './components/iridescent-glass-card/IridescentGlassCard';
 import HyperspeedTunnel from './components/hyperspeed-tunnel/HyperspeedTunnel';
 import { NEW_COMPONENTS } from './newComponents';
+import { BUTTON_COMPONENTS } from './buttonComponents';
 
 export const CATEGORIES: CategoryInfo[] = [
   {
@@ -2452,5 +2453,5 @@ export function HyperspeedTunnel({
   },
 ];
 
-export const REGISTRY: RegistryItem[] = [...INITIAL_REGISTRY, ...NEW_COMPONENTS];
+export const REGISTRY: RegistryItem[] = [...INITIAL_REGISTRY, ...NEW_COMPONENTS, ...BUTTON_COMPONENTS];
 

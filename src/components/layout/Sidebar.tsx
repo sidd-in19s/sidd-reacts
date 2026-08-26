@@ -271,7 +271,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span className="text-[11px] font-mono font-semibold">SIDD-Reacts</span>
             </div>
             <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded font-bold">
-              35 Items
+              {REGISTRY.length} Items
             </span>
           </div>
         </div>
