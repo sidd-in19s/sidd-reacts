@@ -1,80 +1,72 @@
 // @ts-nocheck
-// src/components/ThreeBackgrounds/Fog.jsx
 import React, { useEffect, useRef, useState } from 'react';
-import FOG from '../../../../utils/vanta.fog.custom'; // Importing the utility we created in Step 1
+import FOG from '../../../../utils/vanta.fog.custom';
 
-const Fog = ({ config = {}, highlightColor, midtoneColor, lowlightColor, baseColor, speed, className = '' }) => {
+export const Fog = ({
+  config = {},
+  highlightColor,
+  midtoneColor,
+  lowlightColor,
+  baseColor,
+  speed,
+  className = '',
+}) => {
   const cfg = {
-    fogHighlightColor: highlightColor || config?.fogHighlightColor || config?.highlightColor || '#c084fc',
-    fogMidtoneColor: midtoneColor || config?.fogMidtoneColor || config?.midtoneColor || '#6366f1',
-    fogLowlightColor: lowlightColor || config?.fogLowlightColor || config?.lowlightColor || '#1e1b4b',
-    fogBaseColor: baseColor || config?.fogBaseColor || config?.baseColor || '#090a0f',
-    fogSpeed: speed || config?.fogSpeed || config?.speed || 1.5,
-    fogZoom: config?.fogZoom || 1.2,
+    highlightColor: highlightColor || config?.highlightColor || 0xc084fc,
+    midtoneColor: midtoneColor || config?.midtoneColor || 0x6366f1,
+    lowlightColor: lowlightColor || config?.lowlightColor || 0x1e1b4b,
+    baseColor: baseColor || config?.baseColor || 0x090a0f,
+    speed: speed || config?.speed || 1.5,
+    zoom: config?.zoom || 1.2,
+    blurFactor: config?.blurFactor || 0.6,
   };
-  const vantaRef = useRef(null);
-  const [vantaEffect, setVantaEffect] = useState(null);
 
-  // 1. Initialize Vanta Effect on Mount
+  const vantaRef = useRef(null);
+  const effectRef = useRef(null);
+
   useEffect(() => {
     if (!vantaRef.current) return;
 
-    // Default values if config isn't fully loaded yet
-    const effect = FOG({
-      el: vantaRef.current,
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      minHeight: 200.00,
-      minWidth: 200.00,
-      scale: 1.0,
-      scaleMobile: 1.0,
-      // Initial Config
-      highlightColor: config?.highlightColor || 0xffc300,
-      midtoneColor: config?.midtoneColor || 0xff1f00,
-      lowlightColor: config?.lowlightColor || 0x2d00ff,
-      baseColor: config?.baseColor || 0xffebeb,
-      blurFactor: config?.blurFactor || 0.6,
-      speed: config?.speed || 1.0,
-      zoom: config?.zoom || 1.0
-    });
-
-    setVantaEffect(effect);
-
-    // Cleanup on Unmount
-    return () => {
-      if (effect) effect.destroy();
-    };
-  }, []); // Run once on mount
-
-  // 2. Update Effect when Config Changes (Real-time Admin Control)
-  useEffect(() => {
-    if (vantaEffect && config) {
-      vantaEffect.setOptions({
-        highlightColor: config.highlightColor,
-        midtoneColor: config.midtoneColor,
-        lowlightColor: config.lowlightColor,
-        baseColor: config.baseColor,
-        blurFactor: config.blurFactor,
-        speed: config.speed,
-        zoom: config.zoom
+    try {
+      effectRef.current = FOG({
+        el: vantaRef.current,
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.0,
+        scaleMobile: 1.0,
+        highlightColor: typeof cfg.highlightColor === 'string' ? parseInt(cfg.highlightColor.replace('#', '0x'), 16) : cfg.highlightColor,
+        midtoneColor: typeof cfg.midtoneColor === 'string' ? parseInt(cfg.midtoneColor.replace('#', '0x'), 16) : cfg.midtoneColor,
+        lowlightColor: typeof cfg.lowlightColor === 'string' ? parseInt(cfg.lowlightColor.replace('#', '0x'), 16) : cfg.lowlightColor,
+        baseColor: typeof cfg.baseColor === 'string' ? parseInt(cfg.baseColor.replace('#', '0x'), 16) : cfg.baseColor,
+        blurFactor: cfg.blurFactor,
+        speed: cfg.speed,
+        zoom: cfg.zoom,
       });
+    } catch (e) {
+      console.warn('Fog initialization caught safe error:', e);
     }
-  }, [vantaEffect, config]);
+
+    return () => {
+      if (effectRef.current && typeof effectRef.current.destroy === 'function') {
+        try {
+          effectRef.current.destroy();
+        } catch (e) {
+          // Ignore unmount error
+        }
+      }
+    };
+  }, [highlightColor, midtoneColor, lowlightColor, baseColor, speed]);
 
   return (
     <div 
       ref={vantaRef} 
+      className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl ${className}`}
       style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        width: '100vw', 
-        height: '100vh', 
-        zIndex: -1,
-        // Fallback background color while loading
-        background: '#000' 
-      }} 
+        backgroundColor: '#090a0f',
+      }}
     />
   );
 };

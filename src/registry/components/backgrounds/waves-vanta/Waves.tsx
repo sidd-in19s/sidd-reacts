@@ -1,101 +1,154 @@
 // @ts-nocheck
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
+import * as THREE from 'three';
 
-const Waves = ({ config = {}, wavesColor, wavesShininess, waveHeight, waveSpeed, className = '' }) => {
-  const cfg = {
-    wavesColor: wavesColor || config?.wavesColor || '#005588',
-    wavesShininess: wavesShininess || config?.wavesShininess || 30,
-    wavesHeight: waveHeight || config?.wavesHeight || 15,
-    wavesSpeed: waveSpeed || config?.wavesSpeed || 1,
-    wavesZoom: config?.wavesZoom || 1,
-  };
-  const [vantaEffect, setVantaEffect] = useState(null);
-  const myRef = useRef(null);
-  
-  // Load Scripts Helper
+export interface WavesProps {
+  wavesColor?: string;
+  wavesShininess?: number;
+  waveHeight?: number;
+  waveSpeed?: number;
+  className?: string;
+  config?: any;
+}
+
+export const Waves: React.FC<WavesProps> = ({
+  wavesColor = '#005588',
+  wavesShininess = 30,
+  waveHeight = 15,
+  waveSpeed = 1,
+  className = '',
+  config = {},
+}) => {
+  const mountRef = useRef<HTMLDivElement>(null);
+  const color = wavesColor || config?.wavesColor || '#005588';
+  const speed = waveSpeed || config?.wavesSpeed || 1;
+  const height = waveHeight || config?.waveHeight || 15;
+
   useEffect(() => {
-    const loadScript = (src) => {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) {
-          resolve(); 
-          return;
-        }
-        const script = document.createElement('script');
-        script.src = src;
-        script.async = true;
-        script.onload = resolve;
-        script.onerror = reject;
-        document.body.appendChild(script);
-      });
+    const mount = mountRef.current;
+    if (!mount) return;
+
+    const width = mount.clientWidth || 800;
+    const h = mount.clientHeight || 500;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color('#030712');
+    scene.fog = new THREE.FogExp2('#030712', 0.002);
+
+    const camera = new THREE.PerspectiveCamera(55, width / h, 1, 1000);
+    camera.position.set(0, 120, 260);
+    camera.lookAt(0, 0, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(width, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    mount.appendChild(renderer.domElement);
+
+    // Directional & Ambient Lights
+    const ambient = new THREE.AmbientLight('#ffffff', 0.7);
+    scene.add(ambient);
+
+    const dirLight = new THREE.DirectionalLight('#ffffff', 1.2);
+    dirLight.position.set(100, 300, 100);
+    scene.add(dirLight);
+
+    // 3D Plane Mesh for Waves
+    const geomWidth = 500;
+    const geomHeight = 400;
+    const segmentsX = 64;
+    const segmentsY = 64;
+
+    const geometry = new THREE.PlaneGeometry(geomWidth, geomHeight, segmentsX, segmentsY);
+    geometry.rotateX(-Math.PI / 2);
+
+    const material = new THREE.MeshPhongMaterial({
+      color: new THREE.Color(color),
+      emissive: new THREE.Color(color).multiplyScalar(0.2),
+      shininess: wavesShininess || 30,
+      wireframe: false,
+      flatShading: true,
+      side: THREE.DoubleSide,
+    });
+
+    const waveMesh = new THREE.Mesh(geometry, material);
+    scene.add(waveMesh);
+
+    const posAttr = geometry.attributes.position;
+    const initialPositions = posAttr.array.slice();
+
+    let mouseX = 0;
+    let mouseY = 0;
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = mount.getBoundingClientRect();
+      mouseX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouseY = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
     };
 
-    const initVanta = async () => {
-      try {
-        // Load Three.js r134 (Safe for Vanta)
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js');
-        // Load Vanta Waves
-        await loadScript('https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js');
-        
-        if (!vantaEffect && window.VANTA && window.VANTA.WAVES) {
-             const effect = window.VANTA.WAVES({
-              el: myRef.current,
-              mouseControls: true,
-              touchControls: true,
-              gyroControls: false,
-              minHeight: 200.00,
-              minWidth: 200.00,
-              scale: 1.00,
-              scaleMobile: 1.00,
-              // Force string parsing or number conversion just in case
-              color: cfg.wavesColor ? parseInt(String(cfg.wavesColor).replace('#', '0x'), 16) : 0x005588,
-              shininess: cfg.wavesShininess ?? 30,
-              waveHeight: cfg.wavesHeight ?? 15,
-              waveSpeed: cfg.wavesSpeed ?? 1,
-              zoom: cfg.wavesZoom ?? 1
-            });
-            setVantaEffect(effect);
-        }
-      } catch (err) {
-        console.error("Failed to load Vanta Scripts", err);
+    mount.addEventListener('mousemove', handleMouseMove);
+
+    let animId: number;
+    let time = 0;
+
+    const animate = () => {
+      animId = requestAnimationFrame(animate);
+      time += 0.02 * speed;
+
+      const pos = posAttr.array;
+      for (let i = 0; i < pos.length; i += 3) {
+        const x = initialPositions[i];
+        const z = initialPositions[i + 2];
+
+        // Multi-frequency sinusoidal wave equation
+        const wave1 = Math.sin(x * 0.03 + time * 1.5) * (height * 0.6);
+        const wave2 = Math.cos(z * 0.04 + time * 1.2) * (height * 0.4);
+        const wave3 = Math.sin((x + z) * 0.02 + time) * (height * 0.3);
+        const mouseRepulsion = Math.exp(-((x - mouseX * 200) ** 2 + (z - mouseY * 150) ** 2) / 6000) * 18;
+
+        pos[i + 1] = wave1 + wave2 + wave3 + mouseRepulsion;
       }
+
+      posAttr.needsUpdate = true;
+      geometry.computeVertexNormals();
+
+      // Gentle camera sway
+      camera.position.x += (mouseX * 40 - camera.position.x) * 0.05;
+      camera.lookAt(0, 0, 0);
+
+      renderer.render(scene, camera);
     };
 
-    initVanta();
+    animate();
+
+    const handleResize = () => {
+      if (!mount) return;
+      const w = mount.clientWidth || 800;
+      const h_new = mount.clientHeight || 500;
+      camera.aspect = w / h_new;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h_new);
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      if (vantaEffect) vantaEffect.destroy();
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', handleResize);
+      if (mount) {
+        mount.removeEventListener('mousemove', handleMouseMove);
+        if (renderer.domElement && mount.contains(renderer.domElement)) {
+          mount.removeChild(renderer.domElement);
+        }
+      }
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run once on mount
-
-  // Handle Dynamic Updates
-  useEffect(() => {
-    if (vantaEffect) {
-      vantaEffect.setOptions({
-        color: cfg.wavesColor ? parseInt(String(cfg.wavesColor).replace('#', '0x'), 16) : 0x005588,
-        shininess: cfg.wavesShininess ?? 30,
-        waveHeight: cfg.wavesHeight ?? 15,
-        waveSpeed: cfg.wavesSpeed ?? 1,
-        zoom: cfg.wavesZoom ?? 1
-      });
-    }
-  }, [wavesColor, wavesShininess, waveHeight, waveSpeed, config, vantaEffect]);
+  }, [color, speed, height, wavesShininess]);
 
   return (
-    <div 
-      ref={myRef} 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: -1,
-        // pointerEvents must be auto/none?
-        // Vanta usually attaches mouse listeners to window, so pointerEvents on div might effectively be background.
-        // But if we want the user to be able to click links ON TOP, this must be behind.
-        // So zIndex: -1 is correct.
-      }}
+    <div
+      ref={mountRef}
+      className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl ${className}`}
     />
   );
 };

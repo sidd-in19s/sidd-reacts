@@ -60,7 +60,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onSelectComponent }) =
 
           {/* Subtitle */}
           <p className="text-base sm:text-lg text-zinc-300 leading-relaxed font-normal max-w-3xl">
-            A curated library of 10 production-ready animated components, 3D interactive cards, fluid ambient backgrounds, and canvas shaders. Completely customizable, copy-paste ready, and installable via the custom <code className="text-indigo-300 bg-indigo-950/60 px-2 py-0.5 rounded font-mono text-sm">sidd-reacts</code> CLI.
+            A curated library of {REGISTRY.length} production-ready animated components, 3D interactive cards, fluid ambient backgrounds, and canvas shaders. Completely customizable, copy-paste ready, and installable via the custom <code className="text-indigo-300 bg-indigo-950/60 px-2 py-0.5 rounded font-mono text-sm">sidd-reacts</code> CLI.
           </p>
 
           {/* Action CTAs */}
@@ -70,7 +70,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onSelectComponent }) =
               onClick={() => onSelectComponent('spotlight-card')}
               className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3.5 text-sm font-semibold text-white shadow-xl shadow-indigo-500/25 transition-all hover:scale-105 hover:shadow-indigo-500/40 cursor-pointer"
             >
-              <span>Explore 10 Components</span>
+              <span>Explore {REGISTRY.length} Components</span>
               <ArrowRight size={16} />
             </button>
 

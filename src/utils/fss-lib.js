@@ -297,6 +297,9 @@ FSS.Color = function(hex, opacity) {
 
 FSS.Color.prototype = {
   set: function(hex, opacity) {
+    if (!hex || typeof hex !== 'string') {
+      hex = '#ffffff';
+    }
     hex = hex.replace('#', '');
     var size = hex.length / 3;
     this.rgba[0] = parseInt(hex.substring(size * 0, size * 1), 16) / 255;

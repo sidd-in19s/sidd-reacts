@@ -5,6 +5,7 @@ import { BackgroundSwitcher, BackgroundStyle } from './BackgroundSwitcher';
 import { LiveControls } from './LiveControls';
 import { CodeBlock } from './CodeBlock';
 import { PropsTable } from './PropsTable';
+import { ErrorBoundary } from '../ui/ErrorBoundary';
 import {
   RotateCcw,
   Maximize2,
@@ -137,7 +138,9 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({
     if (!isBackground) {
       return (
         <div className="w-full h-full flex items-center justify-center p-6">
-          <ComponentToRender {...propValues} />
+          <ErrorBoundary onReset={handleReload} fallbackTitle={`Error rendering ${item.name}`}>
+            <ComponentToRender {...propValues} />
+          </ErrorBoundary>
         </div>
       );
     }
@@ -146,7 +149,9 @@ export const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({
       <div className="relative w-full h-full min-h-[500px] md:min-h-[580px] overflow-hidden flex flex-col justify-between">
         {/* Full-width Canvas / Background component underneath */}
         <div className="absolute inset-0 w-full h-full z-0 pointer-events-auto">
-          <ComponentToRender {...propValues} />
+          <ErrorBoundary onReset={handleReload} fallbackTitle={`Error rendering ${item.name}`}>
+            <ComponentToRender {...propValues} />
+          </ErrorBoundary>
         </div>
 
         {/* Optional Demo Content Landing Page Mockup (Non-blocking mouse events) */}
