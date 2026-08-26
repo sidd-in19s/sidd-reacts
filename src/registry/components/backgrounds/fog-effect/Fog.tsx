@@ -3,7 +3,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import FOG from '../../../../utils/vanta.fog.custom'; // Importing the utility we created in Step 1
 
-const Fog = ({ config }) => {
+const Fog = ({ config = {}, highlightColor, midtoneColor, lowlightColor, baseColor, speed, className = '' }) => {
+  const cfg = {
+    fogHighlightColor: highlightColor || config?.fogHighlightColor || config?.highlightColor || '#c084fc',
+    fogMidtoneColor: midtoneColor || config?.fogMidtoneColor || config?.midtoneColor || '#6366f1',
+    fogLowlightColor: lowlightColor || config?.fogLowlightColor || config?.lowlightColor || '#1e1b4b',
+    fogBaseColor: baseColor || config?.fogBaseColor || config?.baseColor || '#090a0f',
+    fogSpeed: speed || config?.fogSpeed || config?.speed || 1.5,
+    fogZoom: config?.fogZoom || 1.2,
+  };
   const vantaRef = useRef(null);
   const [vantaEffect, setVantaEffect] = useState(null);
 

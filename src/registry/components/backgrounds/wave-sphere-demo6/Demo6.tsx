@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-const Demo6 = () => {
+const Demo6 = ({ config = {}, className = '' }) => {
   const mountRef = useRef(null);
 
   useEffect(() => {

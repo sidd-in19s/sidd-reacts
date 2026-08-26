@@ -555,35 +555,22 @@ const PixelBlastEffect = ({
 };
 
 // Wrapper component that reads from config prop (matching portfolio pattern)
-const PixelBlast = ({ config }) => {
+const PixelBlast = ({ config = {}, variant, pixelSize, color, patternScale, liquidStrength, enableRipples, className = '' }) => {
+  const cfg = config || {};
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: -1,
-      }}
-    >
+    <div className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl ${className}`}>
       <PixelBlastEffect
-        variant={config.pbVariant || 'diamond'}
-        pixelSize={config.pbPixelSize ?? 4}
-        color={config.pbColor || '#1ca645'}
-        patternScale={config.pbPatternScale ?? 2}
-        patternDensity={config.pbPatternDensity ?? 1}
-        pixelSizeJitter={config.pbPixelJitter ?? 0}
-        enableRipples={config.pbEnableRipples !== false}
-        rippleSpeed={config.pbRippleSpeed ?? 0.4}
-        rippleThickness={config.pbRippleThickness ?? 0.12}
-        rippleIntensityScale={config.pbRippleIntensity ?? 1.5}
-        liquid={config.pbLiquid || false}
-        liquidStrength={config.pbLiquidStrength ?? 0.12}
-        liquidRadius={config.pbLiquidRadius ?? 1.2}
-        liquidWobbleSpeed={config.pbLiquidWobbleSpeed ?? 5}
-        speed={config.pbSpeed ?? 0.5}
-        edgeFade={config.pbEdgeFade ?? 0.25}
+        variant={variant || cfg.pbVariant || 'square'}
+        pixelSize={pixelSize || cfg.pbPixelSize || 6}
+        color={color || cfg.pbColor || '#B19EEF'}
+        patternScale={patternScale || cfg.pbScale || 3}
+        patternDensity={cfg.pbDensity || 1}
+        pixelSizeJitter={cfg.pbJitter || 0}
+        enableRipples={enableRipples !== undefined ? enableRipples : (cfg.pbEnableRipples ?? true)}
+        rippleIntensityScale={cfg.pbRippleIntensity || 1}
+        rippleThickness={cfg.pbRippleThickness || 0.1}
+        rippleSpeed={cfg.pbRippleSpeed || 0.4}
+        liquidStrength={liquidStrength || cfg.pbLiquidStrength || 0.1}
       />
     </div>
   );

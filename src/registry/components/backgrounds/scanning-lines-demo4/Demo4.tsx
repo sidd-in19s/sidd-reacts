@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import '../../../../utils/perlin'; 
 
-const Demo4 = () => {
+const Demo4 = ({ config = {}, className = '' }) => {
   const mountRef = useRef(null);
 
   useEffect(() => {

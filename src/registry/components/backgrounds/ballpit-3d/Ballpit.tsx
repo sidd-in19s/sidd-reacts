@@ -740,27 +740,23 @@ const BallpitEffect = ({ className = '', count = 100, gravity = 0.01, friction =
 };
 
 // Wrapper corresponding to other config-based components
-const Ballpit = ({ config }) => {
+const Ballpit = ({ config = {}, count, gravity, friction, wallBounce, followCursor, colors, className = '' }) => {
+  const cfg = config || {};
   return (
     <div
+      className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl ${className}`}
       style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: -1,
-        touchAction: 'none', // To prevent scroll blocking issues
-        backgroundColor: config.bpBgColor || '#000000',
+        touchAction: 'none',
+        backgroundColor: cfg.bpBgColor || '#060608',
       }}
     >
       <BallpitEffect
-        count={config.bpCount ?? 100}
-        gravity={config.bpGravity ?? 0.01}
-        friction={config.bpFriction ?? 0.9975}
-        wallBounce={config.bpWallBounce ?? 0.95}
-        followCursor={config.bpFollowCursor ?? true}
-        colors={[config.bpColor1 || '#ffffff', config.bpColor2 || '#cccccc', config.bpColor3 || '#6b21a8', config.bpColor4 || '#111827']}
+        count={count ?? cfg.bpCount ?? 100}
+        gravity={gravity ?? cfg.bpGravity ?? 0.01}
+        friction={friction ?? cfg.bpFriction ?? 0.9975}
+        wallBounce={wallBounce ?? cfg.bpWallBounce ?? 0.95}
+        followCursor={followCursor ?? cfg.bpFollowCursor ?? true}
+        colors={colors || [cfg.bpColor1 || '#a855f7', cfg.bpColor2 || '#ec4899', cfg.bpColor3 || '#3b82f6', cfg.bpColor4 || '#06b6d4']}
       />
     </div>
   );

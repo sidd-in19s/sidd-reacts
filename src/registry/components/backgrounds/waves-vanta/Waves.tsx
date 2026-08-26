@@ -1,7 +1,14 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 
-const Waves = ({ config }) => {
+const Waves = ({ config = {}, wavesColor, wavesShininess, waveHeight, waveSpeed, className = '' }) => {
+  const cfg = {
+    wavesColor: wavesColor || config?.wavesColor || '#005588',
+    wavesShininess: wavesShininess || config?.wavesShininess || 30,
+    wavesHeight: waveHeight || config?.wavesHeight || 15,
+    wavesSpeed: waveSpeed || config?.wavesSpeed || 1,
+    wavesZoom: config?.wavesZoom || 1,
+  };
   const [vantaEffect, setVantaEffect] = useState(null);
   const myRef = useRef(null);
   
@@ -40,11 +47,11 @@ const Waves = ({ config }) => {
               scale: 1.00,
               scaleMobile: 1.00,
               // Force string parsing or number conversion just in case
-              color: config.wavesColor ? parseInt(String(config.wavesColor).replace('#', '0x'), 16) : 0x005588,
-              shininess: config.wavesShininess ?? 30,
-              waveHeight: config.wavesHeight ?? 15,
-              waveSpeed: config.wavesSpeed ?? 1,
-              zoom: config.wavesZoom ?? 1
+              color: cfg.wavesColor ? parseInt(String(cfg.wavesColor).replace('#', '0x'), 16) : 0x005588,
+              shininess: cfg.wavesShininess ?? 30,
+              waveHeight: cfg.wavesHeight ?? 15,
+              waveSpeed: cfg.wavesSpeed ?? 1,
+              zoom: cfg.wavesZoom ?? 1
             });
             setVantaEffect(effect);
         }
@@ -65,14 +72,14 @@ const Waves = ({ config }) => {
   useEffect(() => {
     if (vantaEffect) {
       vantaEffect.setOptions({
-        color: config.wavesColor ? parseInt(String(config.wavesColor).replace('#', '0x'), 16) : 0x005588,
-        shininess: config.wavesShininess ?? 30,
-        waveHeight: config.wavesHeight ?? 15,
-        waveSpeed: config.wavesSpeed ?? 1,
-        zoom: config.wavesZoom ?? 1
+        color: cfg.wavesColor ? parseInt(String(cfg.wavesColor).replace('#', '0x'), 16) : 0x005588,
+        shininess: cfg.wavesShininess ?? 30,
+        waveHeight: cfg.wavesHeight ?? 15,
+        waveSpeed: cfg.wavesSpeed ?? 1,
+        zoom: cfg.wavesZoom ?? 1
       });
     }
-  }, [config, vantaEffect]);
+  }, [wavesColor, wavesShininess, waveHeight, waveSpeed, config, vantaEffect]);
 
   return (
     <div 

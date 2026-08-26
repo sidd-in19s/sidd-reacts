@@ -137,14 +137,35 @@ const update = (store, cfg) => {
 };
 
 
-const BackgroundFSS = ({ config }) => {
+const BackgroundFSS = ({ config = {}, meshAmbient, meshDiffuse, light1Ambient, light1Diffuse, segments, slices, className = '' }) => {
+  const effectiveConfig = {
+    meshAmbient: meshAmbient || config?.meshAmbient || '#334155',
+    meshDiffuse: meshDiffuse || config?.meshDiffuse || '#64748b',
+    light1Ambient: light1Ambient || config?.light1Ambient || '#6366f1',
+    light1Diffuse: light1Diffuse || config?.light1Diffuse || '#ec4899',
+    light2Ambient: config?.light2Ambient || '#3b82f6',
+    light2Diffuse: config?.light2Diffuse || '#10b981',
+    lightCount: config?.lightCount || 4,
+    zOffset: config?.zOffset || 100,
+    width: config?.width || 1.2,
+    height: config?.height || 1.2,
+    depth: config?.depth || 10,
+    segments: segments || config?.segments || 16,
+    slices: slices || config?.slices || 12,
+    xRange: config?.xRange || 0.8,
+    yRange: config?.yRange || 0.1,
+    speed: config?.speed || 0.001,
+    autopilot: config?.autopilot || false,
+    enableCursorLight: config?.enableCursorLight || false,
+    cursorLightColor: config?.cursorLightColor || '#FFFFFF',
+  };
   const containerRef = useRef(null);
   const outputRef = useRef(null);
-  const configRef = useRef(config);
+  const configRef = useRef(effectiveConfig);
 
   useEffect(() => {
-    configRef.current = config;
-  }, [config]);
+    configRef.current = effectiveConfig;
+  }, [meshAmbient, meshDiffuse, light1Ambient, light1Diffuse, segments, slices, config]);
 
   const fssRef = useRef({
     renderer: null,
@@ -296,21 +317,10 @@ const BackgroundFSS = ({ config }) => {
         store.cursorLight.diffuse.set(config.cursorLightColor);
       }
     }
-  }, [config]);
+  }, [meshAmbient, meshDiffuse, light1Ambient, light1Diffuse, segments, slices, config]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: -1,
-        background: '#111'
-      }}
-    >
+    <div ref={containerRef} className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl ${className}`} style={{ background: '#090a0f' }}>
       <div ref={outputRef} style={{ width: '100%', height: '100%' }} />
     </div>
   );

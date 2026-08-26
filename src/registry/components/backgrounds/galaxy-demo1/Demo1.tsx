@@ -68,7 +68,7 @@ const getGlowTexture = () => {
   return texture;
 };
 
-const Demo1 = () => {
+const Demo1 = ({ config = {}, className = '' }) => {
   const mountRef = useRef(null);
 
   useEffect(() => {
@@ -337,15 +337,7 @@ const Demo1 = () => {
   return (
     <div 
       ref={mountRef} 
-      style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        width: '100vw', 
-        height: '100vh', 
-        zIndex: -1,
-        background: '#000000' 
-      }} 
+      className={`relative w-full h-full min-h-[450px] overflow-hidden rounded-2xl bg-black ${className}`} 
     />
   );
 };
