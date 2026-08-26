@@ -20,66 +20,52 @@ const command = args[0];
 const targetComponent = args[1];
 
 const COMPONENTS = {
-  'spotlight-card': {
-    name: 'Spotlight 3D Card',
-    file: 'SpotlightCard.tsx',
-    dir: 'spotlight-card',
-    deps: ['framer-motion', 'lucide-react', 'clsx', 'tailwind-merge'],
-  },
-  'true-focus': {
-    name: 'True Focus Split Text',
-    file: 'TrueFocusText.tsx',
-    dir: 'true-focus',
-    deps: ['framer-motion'],
-  },
-  'particle-vortex': {
-    name: 'Interactive Particle Vortex Canvas',
-    file: 'ParticleVortex.tsx',
-    dir: 'particle-vortex',
-    deps: [],
-  },
-  'aurora-background': {
-    name: 'Aurora Ambient Background',
-    file: 'AuroraBackground.tsx',
-    dir: 'aurora-background',
-    deps: [],
-  },
-  'magnetic-button': {
-    name: 'Magnetic Ripple Button',
-    file: 'MagneticButton.tsx',
-    dir: 'magnetic-button',
-    deps: ['framer-motion'],
-  },
-  'decrypted-text': {
-    name: 'Decrypted Scramble Text',
-    file: 'DecryptedText.tsx',
-    dir: 'decrypted-text',
-    deps: [],
-  },
-  'pixel-card-reveal': {
-    name: 'Pixelated Image Reveal',
-    file: 'PixelCardReveal.tsx',
-    dir: 'pixel-card-reveal',
-    deps: [],
-  },
-  'floating-dock': {
-    name: 'Floating Mac Spring Dock',
-    file: 'FloatingDock.tsx',
-    dir: 'floating-dock',
-    deps: ['framer-motion', 'lucide-react'],
-  },
-  'iridescent-glass-card': {
-    name: 'Iridescent Glassmorphic Card',
-    file: 'IridescentGlassCard.tsx',
-    dir: 'iridescent-glass-card',
-    deps: ['framer-motion', 'lucide-react'],
-  },
-  'hyperspeed-tunnel': {
-    name: 'Hyperspeed Warp Tunnel',
-    file: 'HyperspeedTunnel.tsx',
-    dir: 'hyperspeed-tunnel',
-    deps: [],
-  },
+  // Base 10 Components
+  'spotlight-card': { name: 'Spotlight 3D Card', file: 'SpotlightCard.tsx', dir: 'spotlight-card', deps: ['framer-motion', 'lucide-react', 'clsx', 'tailwind-merge'] },
+  'true-focus': { name: 'True Focus Split Text', file: 'TrueFocusText.tsx', dir: 'true-focus', deps: ['framer-motion'] },
+  'particle-vortex': { name: 'Interactive Particle Vortex Canvas', file: 'ParticleVortex.tsx', dir: 'particle-vortex', deps: [] },
+  'aurora-background': { name: 'Aurora Ambient Background', file: 'AuroraBackground.tsx', dir: 'aurora-background', deps: [] },
+  'magnetic-button': { name: 'Magnetic Ripple Button', file: 'MagneticButton.tsx', dir: 'magnetic-button', deps: ['framer-motion'] },
+  'decrypted-text': { name: 'Decrypted Scramble Text', file: 'DecryptedText.tsx', dir: 'decrypted-text', deps: [] },
+  'pixel-card-reveal': { name: 'Pixelated Image Reveal', file: 'PixelCardReveal.tsx', dir: 'pixel-card-reveal', deps: [] },
+  'floating-dock': { name: 'Floating Mac Spring Dock', file: 'FloatingDock.tsx', dir: 'floating-dock', deps: ['framer-motion', 'lucide-react'] },
+  'iridescent-glass-card': { name: 'Iridescent Glassmorphic Card', file: 'IridescentGlassCard.tsx', dir: 'iridescent-glass-card', deps: ['framer-motion', 'lucide-react'] },
+  'hyperspeed-tunnel': { name: 'Hyperspeed Warp Tunnel', file: 'HyperspeedTunnel.tsx', dir: 'hyperspeed-tunnel', deps: [] },
+
+  // Category 1: Hand-Drawn / Diary Doodle Style
+  'wobbly-paper-note': { name: 'Wobbly Paper Note Card', file: 'WobblyPaperNote.tsx', dir: 'wobbly-paper-note', deps: ['framer-motion'] },
+  'marker-highlight-text': { name: 'Animated Highlighter Marker Text', file: 'MarkerHighlightText.tsx', dir: 'marker-highlight-text', deps: ['framer-motion'] },
+  'sketch-svg-button': { name: 'Pencil-Sketch SVG Button', file: 'SketchSvgButton.tsx', dir: 'sketch-svg-button', deps: ['framer-motion'] },
+  'doodle-floating-stickers': { name: 'Doodle Floating Stickers', file: 'DoodleFloatingStickers.tsx', dir: 'doodle-floating-stickers', deps: ['framer-motion'] },
+  'scrapbook-polaroid': { name: 'Tape & Scrapbook Polaroid', file: 'ScrapbookPolaroid.tsx', dir: 'scrapbook-polaroid', deps: ['framer-motion'] },
+
+  // Category 2: Interactive Sticker / Skeuomorphic Vinyl Peel
+  'peelable-vinyl-sticker': { name: 'Interactive Peelable Vinyl Sticker', file: 'PeelableVinylSticker.tsx', dir: 'peelable-vinyl-sticker', deps: ['framer-motion'] },
+  'holographic-badge': { name: 'Holographic / Iridescent Foil Badge', file: 'HolographicBadge.tsx', dir: 'holographic-badge', deps: ['framer-motion'] },
+  'rubber-stamp-press': { name: '3D Rubber Stamp / Badge Press', file: 'RubberStampPress.tsx', dir: 'rubber-stamp-press', deps: ['framer-motion'] },
+  'neumorphic-switch': { name: 'Embossed / Debossed Neumorphic Switch', file: 'NeumorphicSwitch.tsx', dir: 'neumorphic-switch', deps: ['framer-motion', 'lucide-react'] },
+  'magnetic-badge-cluster': { name: 'Magnetic Floating Badge Cluster', file: 'MagneticBadgeCluster.tsx', dir: 'magnetic-badge-cluster', deps: ['framer-motion'] },
+
+  // Category 3: 3D & Immersive Animated Backgrounds
+  'fluid-liquid-mesh': { name: 'Interactive 3D Fluid Liquid Mesh', file: 'FluidLiquidMesh.tsx', dir: 'fluid-liquid-mesh', deps: [] },
+  'celestial-nebula': { name: 'Celestial Nebula / Galaxy Cloud', file: 'CelestialNebula.tsx', dir: 'celestial-nebula', deps: [] },
+  'synthwave-grid-floor': { name: 'Cyberpunk 3D Wireframe Grid Floor', file: 'SynthwaveGridFloor.tsx', dir: 'synthwave-grid-floor', deps: [] },
+  'voronoi-cell-network': { name: 'Abstract Voronoi Cell Network', file: 'VoronoiCellNetwork.tsx', dir: 'voronoi-cell-network', deps: [] },
+  'particle-sphere-3d': { name: 'Dynamic 3D Particle Constellation / Sphere', file: 'ParticleSphere3D.tsx', dir: 'particle-sphere-3d', deps: [] },
+
+  // Category 4: Retro Cyberpunk & Glitch HUD
+  'rgb-glitch-card': { name: 'RGB Split / Glitch Card Reveal', file: 'RgbGlitchCard.tsx', dir: 'rgb-glitch-card', deps: ['framer-motion'] },
+  'hud-target-reticle': { name: 'Holographic HUD Target Reticle', file: 'HudTargetReticle.tsx', dir: 'hud-target-reticle', deps: ['framer-motion'] },
+  'crt-scanline-terminal': { name: 'CRT Scanline Terminal Box', file: 'CrtScanlineTerminal.tsx', dir: 'crt-scanline-terminal', deps: [] },
+  'cyber-metric-gauge': { name: 'Cyber Metric Gauge / Circle Progress', file: 'CyberMetricGauge.tsx', dir: 'cyber-metric-gauge', deps: ['framer-motion'] },
+  'laser-sweep-box': { name: 'Laser Sweep Border Box', file: 'LaserSweepBox.tsx', dir: 'laser-sweep-box', deps: ['framer-motion'] },
+
+  // Category 5: Kinetic Micro-Interactions & Fluid UI
+  'gooey-blob-nav': { name: 'Gooey Blob Navigation Bar', file: 'GooeyBlobNav.tsx', dir: 'gooey-blob-nav', deps: ['framer-motion'] },
+  'gravity-tag-cloud': { name: 'Dynamic Gravity Tag Cloud', file: 'GravityTagCloud.tsx', dir: 'gravity-tag-cloud', deps: [] },
+  'liquid-morph-button': { name: 'Liquid Morphing Progress Button', file: 'LiquidMorphButton.tsx', dir: 'liquid-morph-button', deps: ['framer-motion', 'lucide-react'] },
+  'elastic-spring-modal': { name: 'Elastic Spring Drawer / Modal', file: 'ElasticSpringModal.tsx', dir: 'elastic-spring-modal', deps: ['framer-motion', 'lucide-react'] },
+  'staggered-tilt-grid': { name: 'Interactive Staggered Tilt Grid', file: 'StaggeredTiltGrid.tsx', dir: 'staggered-tilt-grid', deps: ['framer-motion'] },
 };
 
 console.log('\n\x1b[38;2;99;102;241m' + `
@@ -90,7 +76,7 @@ console.log('\n\x1b[38;2;99;102;241m' + `
    ███████║██║██████╔╝██████╔╝      ██║  ██║███████╗██║  ██║╚██████╗   ██║   ███████║
    ╚══════╝╚═╝╚═════╝ ╚═════╝       ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝ ╚═════╝   ╚═╝   ╚══════╝
 ` + '\x1b[0m');
-console.log('   \x1b[36m⚡ Next-Gen Kinetic React Components Engine v2.4\x1b[0m\n');
+console.log('   \x1b[36m⚡ Next-Gen Kinetic React Components Engine v2.4 (35 Components)\x1b[0m\n');
 
 if (!command || command === 'help' || command === '--help') {
   console.log(`   Usage:
@@ -102,10 +88,10 @@ if (!command || command === 'help' || command === '--help') {
 }
 
 if (command === 'list') {
-  console.log('   \x1b[1mAvailable SIDD-Reacts Components:\x1b[0m\n');
+  console.log(`   \x1b[1mAvailable SIDD-Reacts Components (${Object.keys(COMPONENTS).length} Total):\x1b[0m\n`);
   Object.keys(COMPONENTS).forEach((key) => {
     const c = COMPONENTS[key];
-    console.log(`   • \x1b[35m${key.padEnd(24)}\x1b[0m \x1b[37m${c.name}\x1b[0m`);
+    console.log(`   • \x1b[35m${key.padEnd(26)}\x1b[0m \x1b[37m${c.name}\x1b[0m`);
   });
   console.log('\n   Run \x1b[32mnpx sidd-reacts add <name>\x1b[0m to install any component.\n');
   process.exit(0);

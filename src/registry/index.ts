@@ -9,6 +9,7 @@ import PixelCardReveal from './components/pixel-card-reveal/PixelCardReveal';
 import FloatingDock from './components/floating-dock/FloatingDock';
 import IridescentGlassCard from './components/iridescent-glass-card/IridescentGlassCard';
 import HyperspeedTunnel from './components/hyperspeed-tunnel/HyperspeedTunnel';
+import { NEW_COMPONENTS } from './newComponents';
 
 export const CATEGORIES: CategoryInfo[] = [
   {
@@ -41,9 +42,33 @@ export const CATEGORIES: CategoryInfo[] = [
     description: 'Canvas mosaic reveals, pixel transitions, and starfield speed tunnels.',
     iconName: 'Wand2',
   },
+  {
+    id: 'sketch',
+    name: 'Hand-Drawn & Doodle',
+    description: 'Wobbly sticky notes, animated marker highlights, pencil sketch buttons, and scrapbook polaroids.',
+    iconName: 'Pencil',
+  },
+  {
+    id: 'stickers',
+    name: 'Stickers & Skeuomorph',
+    description: 'Peelable 3D vinyl stickers, holographic foil badges, tactile rubber stamps, and neumorphic switches.',
+    iconName: 'Stamp',
+  },
+  {
+    id: 'cyberpunk',
+    name: 'Cyberpunk & Glitch HUD',
+    description: 'RGB chromatic split reveals, holographic HUD reticles, CRT phosphor terminals, and laser borders.',
+    iconName: 'Terminal',
+  },
+  {
+    id: 'kinetic',
+    name: 'Fluid UI & Micro-FX',
+    description: 'Gooey blob tabs, dynamic gravity tag physics, liquid morph buttons, and elastic spring modals.',
+    iconName: 'Flame',
+  },
 ];
 
-export const REGISTRY: RegistryItem[] = [
+const INITIAL_REGISTRY: RegistryItem[] = [
   {
     id: 'spotlight-card',
     name: 'Spotlight 3D Card',
@@ -2444,3 +2469,6 @@ export function HyperspeedTunnel({
 }`,
   },
 ];
+
+export const REGISTRY: RegistryItem[] = [...INITIAL_REGISTRY, ...NEW_COMPONENTS];
+

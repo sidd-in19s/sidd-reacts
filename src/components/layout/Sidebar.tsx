@@ -12,6 +12,10 @@ import {
   ChevronRight,
   Zap,
   Terminal,
+  Pencil,
+  Stamp,
+  Flame,
+  Layers,
 } from 'lucide-react';
 
 export interface SidebarProps {
@@ -28,6 +32,10 @@ const CATEGORY_ICONS: Record<ComponentCategory, React.ComponentType<{ size?: num
   backgrounds: Sparkles,
   ui: MousePointerClick,
   fx: Wand2,
+  sketch: Pencil,
+  stickers: Stamp,
+  cyberpunk: Terminal,
+  kinetic: Flame,
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({

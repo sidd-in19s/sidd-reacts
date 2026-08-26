@@ -1,6 +1,15 @@
 import React from 'react';
 
-export type ComponentCategory = 'text' | 'backgrounds' | 'ui' | 'cards' | 'fx';
+export type ComponentCategory =
+  | 'text'
+  | 'backgrounds'
+  | 'ui'
+  | 'cards'
+  | 'fx'
+  | 'sketch'
+  | 'stickers'
+  | 'cyberpunk'
+  | 'kinetic';
 
 export interface PropControl {
   name: string;
