@@ -167,21 +167,24 @@ export default function Demo() {
     dependencies: ['three'],
     cliCommand: 'npx sidd-reacts add ballpit-3d',
     propsConfig: [
-      { name: 'count', label: 'Sphere Count', type: 'slider', defaultValue: 100, min: 20, max: 200, step: 10 },
-      { name: 'gravity', label: 'Gravity Force', type: 'slider', defaultValue: 0.012, min: 0.001, max: 0.05, step: 0.002 },
-      { name: 'friction', label: 'Air Friction', type: 'slider', defaultValue: 0.995, min: 0.95, max: 0.9999, step: 0.0005 },
-      { name: 'wallBounce', label: 'Wall Restitution', type: 'slider', defaultValue: 0.92, min: 0.5, max: 1.1, step: 0.05 },
-      { name: 'color1', label: 'Ball Color 1', type: 'color', defaultValue: '#a855f7' },
-      { name: 'color2', label: 'Ball Color 2', type: 'color', defaultValue: '#ec4899' },
-      { name: 'color3', label: 'Ball Color 3', type: 'color', defaultValue: '#3b82f6' },
-      { name: 'color4', label: 'Ball Color 4', type: 'color', defaultValue: '#06b6d4' },
-      { name: 'bgColor', label: 'Background Color', type: 'color', defaultValue: '#060608' },
-      { name: 'followCursor', label: 'Cursor Attraction', type: 'boolean', defaultValue: true },
+      { name: 'count', label: 'Ball Count', type: 'slider', defaultValue: 100, min: 20, max: 250, step: 10 },
+      { name: 'gravity', label: 'Gravity', type: 'slider', defaultValue: 0.5, min: 0, max: 2, step: 0.05 },
+      { name: 'friction', label: 'Friction', type: 'slider', defaultValue: 0.9975, min: 0.95, max: 0.9999, step: 0.0005 },
+      { name: 'wallBounce', label: 'Wall Bounce', type: 'slider', defaultValue: 0.95, min: 0.5, max: 1.1, step: 0.05 },
+      { name: 'color1', label: 'Ball Color 1', type: 'color', defaultValue: '#4f46e5' },
+      { name: 'color2', label: 'Ball Color 2', type: 'color', defaultValue: '#ffffff' },
+      { name: 'color3', label: 'Ball Color 3', type: 'color', defaultValue: '#ea580c' },
+      { name: 'color4', label: 'Ball Color 4', type: 'color', defaultValue: '#22c55e' },
+      { name: 'bgColor', label: 'Background Color', type: 'color', defaultValue: '#0c0c12' },
+      { name: 'followCursor', label: 'Display Cursor', type: 'boolean', defaultValue: true },
     ],
     apiDocs: [
-      { name: 'count', type: 'number', default: '100', description: 'Number of spheres in the 3D physics space' },
-      { name: 'color1', type: 'string', default: "'#a855f7'", description: 'Palette color 1 for balls' },
-      { name: 'color2', type: 'string', default: "'#ec4899'", description: 'Palette color 2 for balls' },
+      { name: 'count', type: 'number', default: '100', description: 'Number of spheres in the ballpit' },
+      { name: 'gravity', type: 'number', default: '0.5', description: 'Controls the gravity affecting the balls' },
+      { name: 'friction', type: 'number', default: '0.9975', description: 'Sets the friction applied to ball movement' },
+      { name: 'wallBounce', type: 'number', default: '0.95', description: 'Determines how much balls bounce off walls' },
+      { name: 'colors', type: 'string[]', default: "['#4f46e5', '#ffffff', '#ea580c', '#22c55e']", description: 'Colors of the balls' },
+      { name: 'followCursor', type: 'boolean', default: 'true', description: 'Enables or disables the sphere following the cursor' },
     ],
     component: Ballpit,
     codeTSX: `import React from 'react';
@@ -189,18 +192,20 @@ import { Ballpit } from './Ballpit';
 
 export default function Demo() {
   return (
-    <Ballpit
-      count={100}
-      gravity={0.012}
-      color1="#a855f7"
-      color2="#ec4899"
-      color3="#3b82f6"
-      color4="#06b6d4"
-    />
+    <div style={{ position: 'relative', overflow: 'hidden', minHeight: '500px', width: '100%' }}>
+      <Ballpit
+        count={100}
+        gravity={0.5}
+        friction={0.9975}
+        wallBounce={0.95}
+        followCursor={true}
+        colors={['#4f46e5', '#ffffff', '#ea580c', '#22c55e']}
+      />
+    </div>
   );
 }`,
     codeJSX: `// JSX version available`,
-    demoUsage: `<Ballpit count={100} color1="#a855f7" color2="#ec4899" />`,
+    demoUsage: `<Ballpit count={100} gravity={0.5} colors={['#4f46e5', '#ffffff', '#ea580c', '#22c55e']} />`,
   },
 
   {
