@@ -1,21 +1,21 @@
 import { RegistryItem } from './types';
 
 // Import all 15 Button Components
-import CyberShatterButton from './components/cyber-shatter-button/CyberShatterButton';
-import HolographicFoilButton from './components/holographic-foil-button/HolographicFoilButton';
-import ArcadePixelButton from './components/arcade-pixel-button/ArcadePixelButton';
-import LiquidMercuryButton from './components/liquid-mercury-button/LiquidMercuryButton';
-import ElectricArcButton from './components/electric-arc-button/ElectricArcButton';
-import OrigamiFoldButton from './components/origami-fold-button/OrigamiFoldButton';
-import CosmicOrbitButton from './components/cosmic-orbit-button/CosmicOrbitButton';
-import BiometricScanButton from './components/biometric-scan-button/BiometricScanButton';
-import TypewriterKeyButton from './components/typewriter-key-button/TypewriterKeyButton';
-import ThermalHeatmapButton from './components/thermal-heatmap-button/ThermalHeatmapButton';
-import WaxSealButton from './components/wax-seal-button/WaxSealButton';
-import AuroraGradientButton from './components/aurora-gradient-button/AuroraGradientButton';
-import VhsRewindButton from './components/vhs-rewind-button/VhsRewindButton';
-import SoundwaveEqButton from './components/soundwave-eq-button/SoundwaveEqButton';
-import FloatingLevitationButton from './components/floating-levitation-button/FloatingLevitationButton';
+import CyberShatterButton from './components/buttons/cyber-shatter-button/CyberShatterButton';
+import HolographicFoilButton from './components/buttons/holographic-foil-button/HolographicFoilButton';
+import ArcadePixelButton from './components/buttons/arcade-pixel-button/ArcadePixelButton';
+import LiquidMercuryButton from './components/buttons/liquid-mercury-button/LiquidMercuryButton';
+import ElectricArcButton from './components/buttons/electric-arc-button/ElectricArcButton';
+import OrigamiFoldButton from './components/buttons/origami-fold-button/OrigamiFoldButton';
+import CosmicOrbitButton from './components/buttons/cosmic-orbit-button/CosmicOrbitButton';
+import BiometricScanButton from './components/buttons/biometric-scan-button/BiometricScanButton';
+import TypewriterKeyButton from './components/buttons/typewriter-key-button/TypewriterKeyButton';
+import ThermalHeatmapButton from './components/buttons/thermal-heatmap-button/ThermalHeatmapButton';
+import WaxSealButton from './components/buttons/wax-seal-button/WaxSealButton';
+import AuroraGradientButton from './components/buttons/aurora-gradient-button/AuroraGradientButton';
+import VhsRewindButton from './components/buttons/vhs-rewind-button/VhsRewindButton';
+import SoundwaveEqButton from './components/buttons/soundwave-eq-button/SoundwaveEqButton';
+import FloatingLevitationButton from './components/buttons/floating-levitation-button/FloatingLevitationButton';
 
 export const BUTTON_COMPONENTS: RegistryItem[] = [
   {

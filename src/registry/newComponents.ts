@@ -1,39 +1,39 @@
 import { RegistryItem } from './types';
 
 // Category 1: Hand-Drawn / Diary Doodle Style
-import WobblyPaperNote from './components/wobbly-paper-note/WobblyPaperNote';
-import MarkerHighlightText from './components/marker-highlight-text/MarkerHighlightText';
-import SketchSvgButton from './components/sketch-svg-button/SketchSvgButton';
-import DoodleFloatingStickers from './components/doodle-floating-stickers/DoodleFloatingStickers';
-import ScrapbookPolaroid from './components/scrapbook-polaroid/ScrapbookPolaroid';
+import WobblyPaperNote from './components/cards/wobbly-paper-note/WobblyPaperNote';
+import MarkerHighlightText from './components/text/marker-highlight-text/MarkerHighlightText';
+import SketchSvgButton from './components/buttons/sketch-svg-button/SketchSvgButton';
+import DoodleFloatingStickers from './components/animations/doodle-floating-stickers/DoodleFloatingStickers';
+import ScrapbookPolaroid from './components/cards/scrapbook-polaroid/ScrapbookPolaroid';
 
 // Category 2: Interactive Sticker / Skeuomorphic Vinyl Peel
-import PeelableVinylSticker from './components/peelable-vinyl-sticker/PeelableVinylSticker';
-import HolographicBadge from './components/holographic-badge/HolographicBadge';
-import RubberStampPress from './components/rubber-stamp-press/RubberStampPress';
-import NeumorphicSwitch from './components/neumorphic-switch/NeumorphicSwitch';
-import MagneticBadgeCluster from './components/magnetic-badge-cluster/MagneticBadgeCluster';
+import PeelableVinylSticker from './components/buttons/peelable-vinyl-sticker/PeelableVinylSticker';
+import HolographicBadge from './components/cards/holographic-badge/HolographicBadge';
+import RubberStampPress from './components/buttons/rubber-stamp-press/RubberStampPress';
+import NeumorphicSwitch from './components/buttons/neumorphic-switch/NeumorphicSwitch';
+import MagneticBadgeCluster from './components/animations/magnetic-badge-cluster/MagneticBadgeCluster';
 
 // Category 3: 3D & Immersive Animated Backgrounds
-import FluidLiquidMesh from './components/fluid-liquid-mesh/FluidLiquidMesh';
-import CelestialNebula from './components/celestial-nebula/CelestialNebula';
-import SynthwaveGridFloor from './components/synthwave-grid-floor/SynthwaveGridFloor';
-import VoronoiCellNetwork from './components/voronoi-cell-network/VoronoiCellNetwork';
-import ParticleSphere3D from './components/particle-sphere-3d/ParticleSphere3D';
+import FluidLiquidMesh from './components/backgrounds/fluid-liquid-mesh/FluidLiquidMesh';
+import CelestialNebula from './components/backgrounds/celestial-nebula/CelestialNebula';
+import SynthwaveGridFloor from './components/backgrounds/synthwave-grid-floor/SynthwaveGridFloor';
+import VoronoiCellNetwork from './components/backgrounds/voronoi-cell-network/VoronoiCellNetwork';
+import ParticleSphere3D from './components/backgrounds/particle-sphere-3d/ParticleSphere3D';
 
 // Category 4: Retro Cyberpunk & Glitch HUD
-import RgbGlitchCard from './components/rgb-glitch-card/RgbGlitchCard';
-import HudTargetReticle from './components/hud-target-reticle/HudTargetReticle';
-import CrtScanlineTerminal from './components/crt-scanline-terminal/CrtScanlineTerminal';
-import CyberMetricGauge from './components/cyber-metric-gauge/CyberMetricGauge';
-import LaserSweepBox from './components/laser-sweep-box/LaserSweepBox';
+import RgbGlitchCard from './components/cards/rgb-glitch-card/RgbGlitchCard';
+import HudTargetReticle from './components/components/hud-target-reticle/HudTargetReticle';
+import CrtScanlineTerminal from './components/components/crt-scanline-terminal/CrtScanlineTerminal';
+import CyberMetricGauge from './components/components/cyber-metric-gauge/CyberMetricGauge';
+import LaserSweepBox from './components/cards/laser-sweep-box/LaserSweepBox';
 
 // Category 5: Kinetic Micro-Interactions & Fluid UI
-import GooeyBlobNav from './components/gooey-blob-nav/GooeyBlobNav';
-import GravityTagCloud from './components/gravity-tag-cloud/GravityTagCloud';
-import LiquidMorphButton from './components/liquid-morph-button/LiquidMorphButton';
-import ElasticSpringModal from './components/elastic-spring-modal/ElasticSpringModal';
-import StaggeredTiltGrid from './components/staggered-tilt-grid/StaggeredTiltGrid';
+import GooeyBlobNav from './components/components/gooey-blob-nav/GooeyBlobNav';
+import GravityTagCloud from './components/animations/gravity-tag-cloud/GravityTagCloud';
+import LiquidMorphButton from './components/buttons/liquid-morph-button/LiquidMorphButton';
+import ElasticSpringModal from './components/components/elastic-spring-modal/ElasticSpringModal';
+import StaggeredTiltGrid from './components/cards/staggered-tilt-grid/StaggeredTiltGrid';
 
 export const NEW_COMPONENTS: RegistryItem[] = [
   // ==================== Text Animations ====================

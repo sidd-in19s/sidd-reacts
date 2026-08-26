@@ -1,14 +1,14 @@
 import { RegistryItem, CategoryInfo } from './types';
-import SpotlightCard from './components/spotlight-card/SpotlightCard';
-import TrueFocusText from './components/true-focus/TrueFocusText';
-import ParticleVortex from './components/particle-vortex/ParticleVortex';
-import AuroraBackground from './components/aurora-background/AuroraBackground';
-import MagneticButton from './components/magnetic-button/MagneticButton';
-import DecryptedText from './components/decrypted-text/DecryptedText';
-import PixelCardReveal from './components/pixel-card-reveal/PixelCardReveal';
-import FloatingDock from './components/floating-dock/FloatingDock';
-import IridescentGlassCard from './components/iridescent-glass-card/IridescentGlassCard';
-import HyperspeedTunnel from './components/hyperspeed-tunnel/HyperspeedTunnel';
+import SpotlightCard from './components/cards/spotlight-card/SpotlightCard';
+import TrueFocusText from './components/text/true-focus/TrueFocusText';
+import ParticleVortex from './components/backgrounds/particle-vortex/ParticleVortex';
+import AuroraBackground from './components/backgrounds/aurora-background/AuroraBackground';
+import MagneticButton from './components/buttons/magnetic-button/MagneticButton';
+import DecryptedText from './components/text/decrypted-text/DecryptedText';
+import PixelCardReveal from './components/animations/pixel-card-reveal/PixelCardReveal';
+import FloatingDock from './components/components/floating-dock/FloatingDock';
+import IridescentGlassCard from './components/cards/iridescent-glass-card/IridescentGlassCard';
+import HyperspeedTunnel from './components/backgrounds/hyperspeed-tunnel/HyperspeedTunnel';
 import { NEW_COMPONENTS } from './newComponents';
 import { BUTTON_COMPONENTS } from './buttonComponents';
 

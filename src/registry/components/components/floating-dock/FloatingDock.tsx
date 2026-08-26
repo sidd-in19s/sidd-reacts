@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, MotionValue } from 'framer-motion';
 import { Home, Terminal, Layers, Sparkles, Settings, Compass, Palette } from 'lucide-react';
-import { GithubIcon } from '../../../components/icons/BrandIcons';
+import { GithubIcon } from '../../../../components/icons/BrandIcons';
 
 export interface DockItem {
   id: string;
