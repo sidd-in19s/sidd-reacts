@@ -2,12 +2,11 @@ import React from 'react';
 
 export type ComponentCategory =
   | 'text'
+  | 'buttons'
   | 'backgrounds'
-  | 'components'
   | 'cards'
-  | 'stickers'
-  | 'cyberpunk'
-  | 'fx';
+  | 'components'
+  | 'animations';
 
 export interface PropControl {
   name: string;

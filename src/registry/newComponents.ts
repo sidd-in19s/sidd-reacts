@@ -36,34 +36,7 @@ import ElasticSpringModal from './components/elastic-spring-modal/ElasticSpringM
 import StaggeredTiltGrid from './components/staggered-tilt-grid/StaggeredTiltGrid';
 
 export const NEW_COMPONENTS: RegistryItem[] = [
-  // ==================== Category 1: Hand-Drawn / Diary Doodle Style ====================
-  {
-    id: 'wobbly-paper-note',
-    name: 'Wobbly Paper Note Card',
-    category: 'cards',
-    badge: 'NEW',
-    description: 'Sticky note card with torn paper clip path, realistic drop-shadow, and Framer Motion spring wobble and drag physics.',
-    dependencies: ['framer-motion', 'clsx', 'tailwind-merge'],
-    cliCommand: 'npx sidd-reacts add wobbly-paper-note',
-    propsConfig: [
-      { name: 'title', label: 'Note Title', type: 'text', defaultValue: 'Design Notes & Ideas ✏️' },
-      { name: 'paperColor', label: 'Paper Color', type: 'color', defaultValue: '#fef08a' },
-      { name: 'pinColor', label: 'Pin Color', type: 'color', defaultValue: '#ef4444' },
-      { name: 'tiltAngle', label: 'Tilt Angle (°)', type: 'slider', defaultValue: -3, min: -15, max: 15, step: 1 },
-      { name: 'wobbleIntensity', label: 'Wobble Intensity', type: 'slider', defaultValue: 1, min: 0.2, max: 3, step: 0.2 },
-    ],
-    apiDocs: [
-      { name: 'title', type: 'string', default: "'Design Notes & Ideas ✏️'", description: 'Title header displayed on the paper note' },
-      { name: 'content', type: 'string', default: "'...'", description: 'Note message body text' },
-      { name: 'paperColor', type: 'string', default: "'#fef08a'", description: 'Background color of the paper note' },
-      { name: 'tiltAngle', type: 'number', default: '-3', description: 'Resting tilt angle in degrees' },
-    ],
-    component: WobblyPaperNote,
-    codeTSX: `// WobblyPaperNote.tsx implementation`,
-    codeJSX: `// JSX version available`,
-    demoUsage: `<WobblyPaperNote title="Product Brainstorm 💡" paperColor="#fef08a" />`,
-  },
-
+  // ==================== Text Animations ====================
   {
     id: 'marker-highlight-text',
     name: 'Animated Highlighter Marker Text',
@@ -77,7 +50,6 @@ export const NEW_COMPONENTS: RegistryItem[] = [
       { name: 'highlightText', label: 'Highlighted Text', type: 'text', defaultValue: 'alive and truly organic' },
       { name: 'suffixText', label: 'Suffix Text', type: 'text', defaultValue: 'with kinetic animations.' },
       { name: 'highlightColor', label: 'Marker Color', type: 'color', defaultValue: '#facc15' },
-      { name: 'strokeHeight', label: 'Stroke Height (px)', type: 'slider', defaultValue: 18, min: 10, max: 30, step: 2 },
     ],
     apiDocs: [
       { name: 'highlightText', type: 'string', default: "'alive and truly organic'", description: 'Target word highlighted by the animated marker' },
@@ -89,10 +61,11 @@ export const NEW_COMPONENTS: RegistryItem[] = [
     demoUsage: `<MarkerHighlightText highlightText="super intuitive" highlightColor="#facc15" />`,
   },
 
+  // ==================== Buttons & CTAs ====================
   {
     id: 'sketch-svg-button',
     name: 'Pencil-Sketch SVG Button',
-    category: 'components',
+    category: 'buttons',
     badge: 'NEW',
     description: 'Interactive button with animated, looping sketchy border paths using SVG stroke-dashoffset drawing effects on hover.',
     dependencies: ['framer-motion'],
@@ -114,100 +87,32 @@ export const NEW_COMPONENTS: RegistryItem[] = [
   },
 
   {
-    id: 'doodle-floating-stickers',
-    name: 'Doodle Floating Stickers',
-    category: 'stickers',
+    id: 'liquid-morph-button',
+    name: 'Liquid Morphing Progress Button',
+    category: 'buttons',
     badge: 'SPRING',
-    description: 'Physics-enabled cartoon stickers (stars, arrows, smileys) with spring recoil, rotation, and drag inertia on release.',
-    dependencies: ['framer-motion'],
-    cliCommand: 'npx sidd-reacts add doodle-floating-stickers',
+    description: 'Submit button that morphs into a circular spinner, fills with liquid level, and transforms into a checkmark on success.',
+    dependencies: ['framer-motion', 'lucide-react'],
+    cliCommand: 'npx sidd-reacts add liquid-morph-button',
     propsConfig: [
-      { name: 'glowColor', label: 'Glow Hue', type: 'color', defaultValue: '#6366f1' },
+      { name: 'label', label: 'Initial Label', type: 'text', defaultValue: 'Deploy to Production' },
+      { name: 'successLabel', label: 'Success Message', type: 'text', defaultValue: 'Deployed Successfully!' },
+      { name: 'fillColor', label: 'Liquid Fill Color', type: 'color', defaultValue: '#10b981' },
     ],
     apiDocs: [
-      { name: 'glowColor', type: 'string', default: "'#6366f1'", description: 'Ambient glow color around the doodle board' },
+      { name: 'label', type: 'string', default: "'Deploy to Production'", description: 'Button resting label' },
+      { name: 'fillColor', type: 'string', default: "'#10b981'", description: 'Color of rising liquid fill' },
     ],
-    component: DoodleFloatingStickers,
-    codeTSX: `// DoodleFloatingStickers.tsx implementation`,
+    component: LiquidMorphButton,
+    codeTSX: `// LiquidMorphButton.tsx implementation`,
     codeJSX: `// JSX implementation`,
-    demoUsage: `<DoodleFloatingStickers glowColor="#6366f1" />`,
-  },
-
-  {
-    id: 'scrapbook-polaroid',
-    name: 'Tape & Scrapbook Polaroid',
-    category: 'cards',
-    badge: 'NEW',
-    description: 'Polaroid card taped with textured semi-transparent washi tape that peels up realistically on cursor hover.',
-    dependencies: ['framer-motion'],
-    cliCommand: 'npx sidd-reacts add scrapbook-polaroid',
-    propsConfig: [
-      { name: 'title', label: 'Photo Title', type: 'text', defaultValue: 'Neon Horizons 🌆' },
-      { name: 'caption', label: 'Caption', type: 'text', defaultValue: 'Shot on 35mm film • Kyoto 2026' },
-      { name: 'tapeColor', label: 'Washi Tape Color', type: 'color', defaultValue: '#fbbf24' },
-      { name: 'tiltAngle', label: 'Resting Tilt (°)', type: 'slider', defaultValue: 4, min: -15, max: 15, step: 1 },
-    ],
-    apiDocs: [
-      { name: 'title', type: 'string', default: "'Neon Horizons 🌆'", description: 'Photo caption title' },
-      { name: 'tapeColor', type: 'string', default: "'#fbbf24'", description: 'Color of the washi tape overlay' },
-    ],
-    component: ScrapbookPolaroid,
-    codeTSX: `// ScrapbookPolaroid.tsx implementation`,
-    codeJSX: `// JSX implementation`,
-    demoUsage: `<ScrapbookPolaroid title="Cyber Skyline" tapeColor="#fbbf24" />`,
-  },
-
-  // ==================== Category 2: Interactive Sticker / Skeuomorphic Vinyl Peel ====================
-  {
-    id: 'peelable-vinyl-sticker',
-    name: 'Interactive Peelable Vinyl Sticker',
-    category: 'stickers',
-    badge: 'HOT',
-    description: 'Realistic 3D sticker with dynamic curl geometry that follows cursor position and peel drag vectors.',
-    dependencies: ['framer-motion'],
-    cliCommand: 'npx sidd-reacts add peelable-vinyl-sticker',
-    propsConfig: [
-      { name: 'title', label: 'Sticker Title', type: 'text', defaultValue: 'SIDD-REACTS' },
-      { name: 'badgeColor', label: 'Vinyl Base Color', type: 'color', defaultValue: '#6366f1' },
-      { name: 'peelAmount', label: 'Peel Threshold', type: 'slider', defaultValue: 60, min: 20, max: 100, step: 5 },
-    ],
-    apiDocs: [
-      { name: 'title', type: 'string', default: "'SIDD-REACTS'", description: 'Sticker branding title' },
-      { name: 'badgeColor', type: 'string', default: "'#6366f1'", description: 'Base vinyl sticker gradient tint' },
-    ],
-    component: PeelableVinylSticker,
-    codeTSX: `// PeelableVinylSticker.tsx implementation`,
-    codeJSX: `// JSX implementation`,
-    demoUsage: `<PeelableVinylSticker title="PRO EDITION" badgeColor="#6366f1" />`,
-  },
-
-  {
-    id: 'holographic-badge',
-    name: 'Holographic / Iridescent Foil Badge',
-    category: 'stickers',
-    badge: 'POPULAR',
-    description: 'Shiny foil badge with dynamic rainbow diffraction, specular glare reflections, and 3D mouse spring tilt physics.',
-    dependencies: ['framer-motion'],
-    cliCommand: 'npx sidd-reacts add holographic-badge',
-    propsConfig: [
-      { name: 'label', label: 'Badge Label', type: 'text', defaultValue: 'MASTER DEVELOPER' },
-      { name: 'badgeCode', label: 'Badge Serial Code', type: 'text', defaultValue: 'SR-8921-X' },
-      { name: 'tier', label: 'Tier Rank', type: 'text', defaultValue: 'HOLOGRAPHIC FOIL' },
-    ],
-    apiDocs: [
-      { name: 'label', type: 'string', default: "'MASTER DEVELOPER'", description: 'Badge title text' },
-      { name: 'badgeCode', type: 'string', default: "'SR-8921-X'", description: 'Unique identification code' },
-    ],
-    component: HolographicBadge,
-    codeTSX: `// HolographicBadge.tsx implementation`,
-    codeJSX: `// JSX implementation`,
-    demoUsage: `<HolographicBadge label="FOUNDER PASS" badgeCode="SR-0001" />`,
+    demoUsage: `<LiquidMorphButton label="Upgrade Plan" fillColor="#10b981" />`,
   },
 
   {
     id: 'rubber-stamp-press',
     name: '3D Rubber Stamp / Badge Press',
-    category: 'stickers',
+    category: 'buttons',
     badge: 'NEW',
     description: 'Clickable tactile badge that stamps down with heavy spring physics, ink scatter, and tactile haptic feel.',
     dependencies: ['framer-motion'],
@@ -230,7 +135,7 @@ export const NEW_COMPONENTS: RegistryItem[] = [
   {
     id: 'neumorphic-switch',
     name: 'Embossed / Debossed Neumorphic Switch',
-    category: 'stickers',
+    category: 'buttons',
     badge: 'SPRING',
     description: 'Skeuomorphic tactile toggle that presses into and raises out of the surface with dual dynamic shadows.',
     dependencies: ['framer-motion', 'lucide-react'],
@@ -251,27 +156,29 @@ export const NEW_COMPONENTS: RegistryItem[] = [
   },
 
   {
-    id: 'magnetic-badge-cluster',
-    name: 'Magnetic Floating Badge Cluster',
-    category: 'stickers',
-    badge: 'NEW',
-    description: 'Cluster of branded badges that scatter apart when the cursor approaches and snap back with magnetic spring physics.',
+    id: 'peelable-vinyl-sticker',
+    name: 'Interactive Peelable Vinyl Sticker',
+    category: 'buttons',
+    badge: 'HOT',
+    description: 'Realistic 3D sticker with dynamic curl geometry that follows cursor position and peel drag vectors.',
     dependencies: ['framer-motion'],
-    cliCommand: 'npx sidd-reacts add magnetic-badge-cluster',
+    cliCommand: 'npx sidd-reacts add peelable-vinyl-sticker',
     propsConfig: [
-      { name: 'centerLabel', label: 'Center Emblem Label', type: 'text', defaultValue: 'SIDD-REACTS' },
-      { name: 'clusterRadius', label: 'Cluster Radius (px)', type: 'slider', defaultValue: 120, min: 60, max: 200, step: 10 },
+      { name: 'title', label: 'Sticker Title', type: 'text', defaultValue: 'SIDD-REACTS' },
+      { name: 'badgeColor', label: 'Vinyl Base Color', type: 'color', defaultValue: '#6366f1' },
+      { name: 'peelAmount', label: 'Peel Threshold', type: 'slider', defaultValue: 60, min: 20, max: 100, step: 5 },
     ],
     apiDocs: [
-      { name: 'centerLabel', type: 'string', default: "'SIDD-REACTS'", description: 'Text shown on central core badge' },
+      { name: 'title', type: 'string', default: "'SIDD-REACTS'", description: 'Sticker branding title' },
+      { name: 'badgeColor', type: 'string', default: "'#6366f1'", description: 'Base vinyl sticker gradient tint' },
     ],
-    component: MagneticBadgeCluster,
-    codeTSX: `// MagneticBadgeCluster.tsx implementation`,
+    component: PeelableVinylSticker,
+    codeTSX: `// PeelableVinylSticker.tsx implementation`,
     codeJSX: `// JSX implementation`,
-    demoUsage: `<MagneticBadgeCluster centerLabel="KINETIC CORE" />`,
+    demoUsage: `<PeelableVinylSticker title="PRO EDITION" badgeColor="#6366f1" />`,
   },
 
-  // ==================== Category 3: 3D & Immersive Animated Backgrounds ====================
+  // ==================== Backgrounds ====================
   {
     id: 'fluid-liquid-mesh',
     name: 'Interactive 3D Fluid Liquid Mesh',
@@ -392,11 +299,85 @@ export const NEW_COMPONENTS: RegistryItem[] = [
     demoUsage: `<ParticleSphere3D pointCount={300} particleColor="#38bdf8" />`,
   },
 
-  // ==================== Category 4: Retro Cyberpunk & Glitch HUD ====================
+  // ==================== Cards & Containers ====================
+  {
+    id: 'wobbly-paper-note',
+    name: 'Wobbly Paper Note Card',
+    category: 'cards',
+    badge: 'NEW',
+    description: 'Sticky note card with torn paper clip path, realistic drop-shadow, and Framer Motion spring wobble and drag physics.',
+    dependencies: ['framer-motion', 'clsx', 'tailwind-merge'],
+    cliCommand: 'npx sidd-reacts add wobbly-paper-note',
+    propsConfig: [
+      { name: 'title', label: 'Note Title', type: 'text', defaultValue: 'Design Notes & Ideas ✏️' },
+      { name: 'paperColor', label: 'Paper Color', type: 'color', defaultValue: '#fef08a' },
+      { name: 'pinColor', label: 'Pin Color', type: 'color', defaultValue: '#ef4444' },
+      { name: 'tiltAngle', label: 'Tilt Angle (°)', type: 'slider', defaultValue: -3, min: -15, max: 15, step: 1 },
+      { name: 'wobbleIntensity', label: 'Wobble Intensity', type: 'slider', defaultValue: 1, min: 0.2, max: 3, step: 0.2 },
+    ],
+    apiDocs: [
+      { name: 'title', type: 'string', default: "'Design Notes & Ideas ✏️'", description: 'Title header displayed on the paper note' },
+      { name: 'content', type: 'string', default: "'...'", description: 'Note message body text' },
+      { name: 'paperColor', type: 'string', default: "'#fef08a'", description: 'Background color of the paper note' },
+      { name: 'tiltAngle', type: 'number', default: '-3', description: 'Resting tilt angle in degrees' },
+    ],
+    component: WobblyPaperNote,
+    codeTSX: `// WobblyPaperNote.tsx implementation`,
+    codeJSX: `// JSX version available`,
+    demoUsage: `<WobblyPaperNote title="Product Brainstorm 💡" paperColor="#fef08a" />`,
+  },
+
+  {
+    id: 'scrapbook-polaroid',
+    name: 'Tape & Scrapbook Polaroid',
+    category: 'cards',
+    badge: 'NEW',
+    description: 'Polaroid card taped with textured semi-transparent washi tape that peels up realistically on cursor hover.',
+    dependencies: ['framer-motion'],
+    cliCommand: 'npx sidd-reacts add scrapbook-polaroid',
+    propsConfig: [
+      { name: 'title', label: 'Photo Title', type: 'text', defaultValue: 'Neon Horizons 🌆' },
+      { name: 'caption', label: 'Caption', type: 'text', defaultValue: 'Shot on 35mm film • Kyoto 2026' },
+      { name: 'tapeColor', label: 'Washi Tape Color', type: 'color', defaultValue: '#fbbf24' },
+      { name: 'tiltAngle', label: 'Resting Tilt (°)', type: 'slider', defaultValue: 4, min: -15, max: 15, step: 1 },
+    ],
+    apiDocs: [
+      { name: 'title', type: 'string', default: "'Neon Horizons 🌆'", description: 'Photo caption title' },
+      { name: 'tapeColor', type: 'string', default: "'#fbbf24'", description: 'Color of the washi tape overlay' },
+    ],
+    component: ScrapbookPolaroid,
+    codeTSX: `// ScrapbookPolaroid.tsx implementation`,
+    codeJSX: `// JSX implementation`,
+    demoUsage: `<ScrapbookPolaroid title="Cyber Skyline" tapeColor="#fbbf24" />`,
+  },
+
+  {
+    id: 'holographic-badge',
+    name: 'Holographic / Iridescent Foil Badge',
+    category: 'cards',
+    badge: 'POPULAR',
+    description: 'Shiny foil badge with dynamic rainbow diffraction, specular glare reflections, and 3D mouse spring tilt physics.',
+    dependencies: ['framer-motion'],
+    cliCommand: 'npx sidd-reacts add holographic-badge',
+    propsConfig: [
+      { name: 'label', label: 'Badge Label', type: 'text', defaultValue: 'MASTER DEVELOPER' },
+      { name: 'badgeCode', label: 'Badge Serial Code', type: 'text', defaultValue: 'SR-8921-X' },
+      { name: 'tier', label: 'Tier Rank', type: 'text', defaultValue: 'HOLOGRAPHIC FOIL' },
+    ],
+    apiDocs: [
+      { name: 'label', type: 'string', default: "'MASTER DEVELOPER'", description: 'Badge title text' },
+      { name: 'badgeCode', type: 'string', default: "'SR-8921-X'", description: 'Unique identification code' },
+    ],
+    component: HolographicBadge,
+    codeTSX: `// HolographicBadge.tsx implementation`,
+    codeJSX: `// JSX implementation`,
+    demoUsage: `<HolographicBadge label="FOUNDER PASS" badgeCode="SR-0001" />`,
+  },
+
   {
     id: 'rgb-glitch-card',
     name: 'RGB Split / Glitch Card Reveal',
-    category: 'cyberpunk',
+    category: 'cards',
     badge: 'HOT',
     description: 'Card component triggering realistic chromatic RGB split and digital slicing displacement on hover.',
     dependencies: ['framer-motion'],
@@ -415,74 +396,6 @@ export const NEW_COMPONENTS: RegistryItem[] = [
     codeTSX: `// RgbGlitchCard.tsx implementation`,
     codeJSX: `// JSX implementation`,
     demoUsage: `<RgbGlitchCard title="NEURAL MATRIX" glitchColorA="#06b6d4" glitchColorB="#ec4899" />`,
-  },
-
-  {
-    id: 'hud-target-reticle',
-    name: 'Holographic HUD Target Reticle',
-    category: 'cyberpunk',
-    badge: 'NEW',
-    description: 'Futuristic crosshair targeting reticle that follows cursor movement, locks onto hovered elements, and displays real-time telemetry.',
-    dependencies: ['framer-motion'],
-    cliCommand: 'npx sidd-reacts add hud-target-reticle',
-    propsConfig: [
-      { name: 'targetName', label: 'Telemetry Target ID', type: 'text', defaultValue: 'HOSTILE_DRONE_ALPHA' },
-      { name: 'reticleColor', label: 'HUD Laser Color', type: 'color', defaultValue: '#38bdf8' },
-      { name: 'reticleSize', label: 'Crosshair Radius (px)', type: 'slider', defaultValue: 90, min: 50, max: 150, step: 5 },
-    ],
-    apiDocs: [
-      { name: 'reticleColor', type: 'string', default: "'#38bdf8'", description: 'Color of the holographic targeting crosshair' },
-    ],
-    component: HudTargetReticle,
-    codeTSX: `// HudTargetReticle.tsx implementation`,
-    codeJSX: `// JSX implementation`,
-    demoUsage: `<HudTargetReticle reticleColor="#38bdf8" />`,
-  },
-
-  {
-    id: 'crt-scanline-terminal',
-    name: 'CRT Scanline Terminal Box',
-    category: 'cyberpunk',
-    badge: 'POPULAR',
-    description: 'Retro-terminal container complete with spherical screen curve distortion, glowing phosphor text, and subtle horizontal scanlines.',
-    dependencies: ['clsx'],
-    cliCommand: 'npx sidd-reacts add crt-scanline-terminal',
-    propsConfig: [
-      { name: 'systemName', label: 'Terminal OS Name', type: 'text', defaultValue: 'SIDD-OS v2.4 (TERMINAL_01)' },
-      { name: 'phosphorColor', label: 'Phosphor Green/Amber', type: 'color', defaultValue: '#22c55e' },
-      { name: 'initialCommand', label: 'Default Command', type: 'text', defaultValue: 'npx sidd-reacts init --engine=kinetic' },
-    ],
-    apiDocs: [
-      { name: 'phosphorColor', type: 'string', default: "'#22c55e'", description: 'Color of CRT phosphor glow and scanlines' },
-    ],
-    component: CrtScanlineTerminal,
-    codeTSX: `// CrtScanlineTerminal.tsx implementation`,
-    codeJSX: `// JSX implementation`,
-    demoUsage: `<CrtScanlineTerminal systemName="MAINFRAME_01" phosphorColor="#22c55e" />`,
-  },
-
-  {
-    id: 'cyber-metric-gauge',
-    name: 'Cyber Metric Gauge / Circle Progress',
-    category: 'cyberpunk',
-    badge: 'NEW',
-    description: 'Animated radial telemetry ring with segmented dashes and real-time ticking values.',
-    dependencies: ['framer-motion'],
-    cliCommand: 'npx sidd-reacts add cyber-metric-gauge',
-    propsConfig: [
-      { name: 'label', label: 'Metric Title', type: 'text', defaultValue: 'CORE QUANTUM FLUX' },
-      { name: 'metricValue', label: 'Metric Value (%)', type: 'slider', defaultValue: 84, min: 0, max: 100, step: 1 },
-      { name: 'unit', label: 'Unit Symbol', type: 'text', defaultValue: '%' },
-      { name: 'gaugeColor', label: 'Gauge Arc Color', type: 'color', defaultValue: '#06b6d4' },
-    ],
-    apiDocs: [
-      { name: 'metricValue', type: 'number', default: '84', description: 'Progress percentage (0 - 100)' },
-      { name: 'gaugeColor', type: 'string', default: "'#06b6d4'", description: 'Color of the illuminated progress arc' },
-    ],
-    component: CyberMetricGauge,
-    codeTSX: `// CyberMetricGauge.tsx implementation`,
-    codeJSX: `// JSX implementation`,
-    demoUsage: `<CyberMetricGauge metricValue={92} gaugeColor="#06b6d4" />`,
   },
 
   {
@@ -508,7 +421,28 @@ export const NEW_COMPONENTS: RegistryItem[] = [
     demoUsage: `<LaserSweepBox title="SECURE WALLET" laserColor="#38bdf8" />`,
   },
 
-  // ==================== Category 5: Kinetic Micro-Interactions & Fluid UI ====================
+  {
+    id: 'staggered-tilt-grid',
+    name: 'Interactive Staggered Tilt Grid',
+    category: 'cards',
+    badge: 'SPRING',
+    description: 'Grid gallery where neighboring cards subtly tilt and scale toward the specific card being hovered.',
+    dependencies: ['framer-motion'],
+    cliCommand: 'npx sidd-reacts add staggered-tilt-grid',
+    propsConfig: [
+      { name: 'cardCount', label: 'Number of Cards', type: 'slider', defaultValue: 4, min: 2, max: 4, step: 1 },
+      { name: 'hoverGlowColor', label: 'Hover Glow Tint', type: 'color', defaultValue: '#6366f1' },
+    ],
+    apiDocs: [
+      { name: 'cardCount', type: 'number', default: '4', description: 'Number of cards displayed in the tilt grid' },
+    ],
+    component: StaggeredTiltGrid,
+    codeTSX: `// StaggeredTiltGrid.tsx implementation`,
+    codeJSX: `// JSX implementation`,
+    demoUsage: `<StaggeredTiltGrid cardCount={4} hoverGlowColor="#6366f1" />`,
+  },
+
+  // ==================== Components & UI ====================
   {
     id: 'gooey-blob-nav',
     name: 'Gooey Blob Navigation Bar',
@@ -530,9 +464,100 @@ export const NEW_COMPONENTS: RegistryItem[] = [
   },
 
   {
+    id: 'hud-target-reticle',
+    name: 'Holographic HUD Target Reticle',
+    category: 'components',
+    badge: 'NEW',
+    description: 'Futuristic crosshair targeting reticle that follows cursor movement, locks onto hovered elements, and displays real-time telemetry.',
+    dependencies: ['framer-motion'],
+    cliCommand: 'npx sidd-reacts add hud-target-reticle',
+    propsConfig: [
+      { name: 'targetName', label: 'Telemetry Target ID', type: 'text', defaultValue: 'HOSTILE_DRONE_ALPHA' },
+      { name: 'reticleColor', label: 'HUD Laser Color', type: 'color', defaultValue: '#38bdf8' },
+      { name: 'reticleSize', label: 'Crosshair Radius (px)', type: 'slider', defaultValue: 90, min: 50, max: 150, step: 5 },
+    ],
+    apiDocs: [
+      { name: 'reticleColor', type: 'string', default: "'#38bdf8'", description: 'Color of the holographic targeting crosshair' },
+    ],
+    component: HudTargetReticle,
+    codeTSX: `// HudTargetReticle.tsx implementation`,
+    codeJSX: `// JSX implementation`,
+    demoUsage: `<HudTargetReticle reticleColor="#38bdf8" />`,
+  },
+
+  {
+    id: 'crt-scanline-terminal',
+    name: 'CRT Scanline Terminal Box',
+    category: 'components',
+    badge: 'POPULAR',
+    description: 'Retro-terminal container complete with spherical screen curve distortion, glowing phosphor text, and subtle horizontal scanlines.',
+    dependencies: ['clsx'],
+    cliCommand: 'npx sidd-reacts add crt-scanline-terminal',
+    propsConfig: [
+      { name: 'systemName', label: 'Terminal OS Name', type: 'text', defaultValue: 'SIDD-OS v2.4 (TERMINAL_01)' },
+      { name: 'phosphorColor', label: 'Phosphor Green/Amber', type: 'color', defaultValue: '#22c55e' },
+      { name: 'initialCommand', label: 'Default Command', type: 'text', defaultValue: 'npx sidd-reacts init --engine=kinetic' },
+    ],
+    apiDocs: [
+      { name: 'phosphorColor', type: 'string', default: "'#22c55e'", description: 'Color of CRT phosphor glow and scanlines' },
+    ],
+    component: CrtScanlineTerminal,
+    codeTSX: `// CrtScanlineTerminal.tsx implementation`,
+    codeJSX: `// JSX implementation`,
+    demoUsage: `<CrtScanlineTerminal systemName="MAINFRAME_01" phosphorColor="#22c55e" />`,
+  },
+
+  {
+    id: 'cyber-metric-gauge',
+    name: 'Cyber Metric Gauge / Circle Progress',
+    category: 'components',
+    badge: 'NEW',
+    description: 'Animated radial telemetry ring with segmented dashes and real-time ticking values.',
+    dependencies: ['framer-motion'],
+    cliCommand: 'npx sidd-reacts add cyber-metric-gauge',
+    propsConfig: [
+      { name: 'label', label: 'Metric Title', type: 'text', defaultValue: 'CORE QUANTUM FLUX' },
+      { name: 'metricValue', label: 'Metric Value (%)', type: 'slider', defaultValue: 84, min: 0, max: 100, step: 1 },
+      { name: 'unit', label: 'Unit Symbol', type: 'text', defaultValue: '%' },
+      { name: 'gaugeColor', label: 'Gauge Arc Color', type: 'color', defaultValue: '#06b6d4' },
+    ],
+    apiDocs: [
+      { name: 'metricValue', type: 'number', default: '84', description: 'Progress percentage (0 - 100)' },
+      { name: 'gaugeColor', type: 'string', default: "'#06b6d4'", description: 'Color of the illuminated progress arc' },
+    ],
+    component: CyberMetricGauge,
+    codeTSX: `// CyberMetricGauge.tsx implementation`,
+    codeJSX: `// JSX implementation`,
+    demoUsage: `<CyberMetricGauge metricValue={92} gaugeColor="#06b6d4" />`,
+  },
+
+  {
+    id: 'elastic-spring-modal',
+    name: 'Elastic Spring Drawer / Modal',
+    category: 'components',
+    badge: 'NEW',
+    description: 'Sheet modal dialog with exaggerated bouncy spring physics and drag-to-dismiss momentum.',
+    dependencies: ['framer-motion', 'lucide-react'],
+    cliCommand: 'npx sidd-reacts add elastic-spring-modal',
+    propsConfig: [
+      { name: 'buttonText', label: 'Trigger Button Text', type: 'text', defaultValue: 'Open Elastic Modal' },
+      { name: 'modalTitle', label: 'Modal Title', type: 'text', defaultValue: 'Kinetic Sheet Modal ✨' },
+      { name: 'accentColor', label: 'Accent Glow Color', type: 'color', defaultValue: '#6366f1' },
+    ],
+    apiDocs: [
+      { name: 'modalTitle', type: 'string', default: "'Kinetic Sheet Modal ✨'", description: 'Header text inside modal' },
+    ],
+    component: ElasticSpringModal,
+    codeTSX: `// ElasticSpringModal.tsx implementation`,
+    codeJSX: `// JSX implementation`,
+    demoUsage: `<ElasticSpringModal buttonText="Open Dialog" modalTitle="Welcome to SIDD-Reacts" />`,
+  },
+
+  // ==================== Animations & FX ====================
+  {
     id: 'gravity-tag-cloud',
     name: 'Dynamic Gravity Tag Cloud',
-    category: 'fx',
+    category: 'animations',
     badge: 'CANVAS',
     description: 'Interactive 2D physics tag cloud where chips fall with gravity, pile on each other, and bounce with cursor momentum.',
     dependencies: ['clsx'],
@@ -552,68 +577,43 @@ export const NEW_COMPONENTS: RegistryItem[] = [
   },
 
   {
-    id: 'liquid-morph-button',
-    name: 'Liquid Morphing Progress Button',
-    category: 'components',
+    id: 'doodle-floating-stickers',
+    name: 'Doodle Floating Stickers',
+    category: 'animations',
     badge: 'SPRING',
-    description: 'Submit button that morphs into a circular spinner, fills with liquid level, and transforms into a checkmark on success.',
-    dependencies: ['framer-motion', 'lucide-react'],
-    cliCommand: 'npx sidd-reacts add liquid-morph-button',
-    propsConfig: [
-      { name: 'label', label: 'Initial Label', type: 'text', defaultValue: 'Deploy to Production' },
-      { name: 'successLabel', label: 'Success Message', type: 'text', defaultValue: 'Deployed Successfully!' },
-      { name: 'fillColor', label: 'Liquid Fill Color', type: 'color', defaultValue: '#10b981' },
-    ],
-    apiDocs: [
-      { name: 'label', type: 'string', default: "'Deploy to Production'", description: 'Button resting label' },
-      { name: 'fillColor', type: 'string', default: "'#10b981'", description: 'Color of rising liquid fill' },
-    ],
-    component: LiquidMorphButton,
-    codeTSX: `// LiquidMorphButton.tsx implementation`,
-    codeJSX: `// JSX implementation`,
-    demoUsage: `<LiquidMorphButton label="Upgrade Plan" fillColor="#10b981" />`,
-  },
-
-  {
-    id: 'elastic-spring-modal',
-    name: 'Elastic Spring Drawer / Modal',
-    category: 'fx',
-    badge: 'NEW',
-    description: 'Sheet modal dialog with exaggerated bouncy spring physics and drag-to-dismiss momentum.',
-    dependencies: ['framer-motion', 'lucide-react'],
-    cliCommand: 'npx sidd-reacts add elastic-spring-modal',
-    propsConfig: [
-      { name: 'buttonText', label: 'Trigger Button Text', type: 'text', defaultValue: 'Open Elastic Modal' },
-      { name: 'modalTitle', label: 'Modal Title', type: 'text', defaultValue: 'Kinetic Sheet Modal ✨' },
-      { name: 'accentColor', label: 'Accent Glow Color', type: 'color', defaultValue: '#6366f1' },
-    ],
-    apiDocs: [
-      { name: 'modalTitle', type: 'string', default: "'Kinetic Sheet Modal ✨'", description: 'Header text inside modal' },
-    ],
-    component: ElasticSpringModal,
-    codeTSX: `// ElasticSpringModal.tsx implementation`,
-    codeJSX: `// JSX implementation`,
-    demoUsage: `<ElasticSpringModal buttonText="Open Dialog" modalTitle="Welcome to SIDD-Reacts" />`,
-  },
-
-  {
-    id: 'staggered-tilt-grid',
-    name: 'Interactive Staggered Tilt Grid',
-    category: 'cards',
-    badge: 'SPRING',
-    description: 'Grid gallery where neighboring cards subtly tilt and scale toward the specific card being hovered.',
+    description: 'Physics-enabled cartoon stickers (stars, arrows, smileys) with spring recoil, rotation, and drag inertia on release.',
     dependencies: ['framer-motion'],
-    cliCommand: 'npx sidd-reacts add staggered-tilt-grid',
+    cliCommand: 'npx sidd-reacts add doodle-floating-stickers',
     propsConfig: [
-      { name: 'cardCount', label: 'Number of Cards', type: 'slider', defaultValue: 4, min: 2, max: 4, step: 1 },
-      { name: 'hoverGlowColor', label: 'Hover Glow Tint', type: 'color', defaultValue: '#6366f1' },
+      { name: 'glowColor', label: 'Glow Hue', type: 'color', defaultValue: '#6366f1' },
     ],
     apiDocs: [
-      { name: 'cardCount', type: 'number', default: '4', description: 'Number of cards displayed in the tilt grid' },
+      { name: 'glowColor', type: 'string', default: "'#6366f1'", description: 'Ambient glow color around the doodle board' },
     ],
-    component: StaggeredTiltGrid,
-    codeTSX: `// StaggeredTiltGrid.tsx implementation`,
+    component: DoodleFloatingStickers,
+    codeTSX: `// DoodleFloatingStickers.tsx implementation`,
     codeJSX: `// JSX implementation`,
-    demoUsage: `<StaggeredTiltGrid cardCount={4} hoverGlowColor="#6366f1" />`,
+    demoUsage: `<DoodleFloatingStickers glowColor="#6366f1" />`,
+  },
+
+  {
+    id: 'magnetic-badge-cluster',
+    name: 'Magnetic Floating Badge Cluster',
+    category: 'animations',
+    badge: 'NEW',
+    description: 'Cluster of branded badges that scatter apart when the cursor approaches and snap back with magnetic spring physics.',
+    dependencies: ['framer-motion'],
+    cliCommand: 'npx sidd-reacts add magnetic-badge-cluster',
+    propsConfig: [
+      { name: 'centerLabel', label: 'Center Emblem Label', type: 'text', defaultValue: 'SIDD-REACTS' },
+      { name: 'clusterRadius', label: 'Cluster Radius (px)', type: 'slider', defaultValue: 120, min: 60, max: 200, step: 10 },
+    ],
+    apiDocs: [
+      { name: 'centerLabel', type: 'string', default: "'SIDD-REACTS'", description: 'Text shown on central core badge' },
+    ],
+    component: MagneticBadgeCluster,
+    codeTSX: `// MagneticBadgeCluster.tsx implementation`,
+    codeJSX: `// JSX implementation`,
+    demoUsage: `<MagneticBadgeCluster centerLabel="KINETIC CORE" />`,
   },
 ];

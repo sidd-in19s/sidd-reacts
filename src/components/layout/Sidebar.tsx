@@ -35,16 +35,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     ? REGISTRY.find((item) => item.id === selectedId)?.category || null
     : null;
 
-  // Track expanded state for each of the 7 primary categories (all open by default)
+  // Track expanded state for each of the primary categories (all open by default)
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
     'get-started': true,
     text: true,
+    buttons: true,
     backgrounds: true,
-    components: true,
     cards: true,
-    stickers: true,
-    cyberpunk: true,
-    fx: true,
+    components: true,
+    animations: true,
   });
 
   // Ensure current category is automatically expanded when user selects a component

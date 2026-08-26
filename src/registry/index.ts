@@ -19,16 +19,16 @@ export const CATEGORIES: CategoryInfo[] = [
     iconName: 'Type',
   },
   {
+    id: 'buttons',
+    name: 'Buttons',
+    description: 'Spring magnetic buttons, tactile neumorphic toggles, rubber stamps, and morphing CTAs.',
+    iconName: 'MousePointerClick',
+  },
+  {
     id: 'backgrounds',
     name: 'Backgrounds',
     description: 'Fluid dynamic auroras, particle vortex fields, and warp tunnels.',
     iconName: 'Sparkles',
-  },
-  {
-    id: 'components',
-    name: 'Components',
-    description: 'Spring-physics magnetic buttons, macOS magnification docks, and interactive controls.',
-    iconName: 'MousePointerClick',
   },
   {
     id: 'cards',
@@ -37,21 +37,15 @@ export const CATEGORIES: CategoryInfo[] = [
     iconName: 'LayoutGrid',
   },
   {
-    id: 'stickers',
-    name: 'Stickers & Badges',
-    description: 'Peelable 3D vinyl stickers, holographic foil badges, tactile rubber stamps, and neumorphic switches.',
-    iconName: 'Stamp',
+    id: 'components',
+    name: 'Components',
+    description: 'macOS magnification docks, gooey navigation bars, CRT terminals, and HUD reticles.',
+    iconName: 'Layers',
   },
   {
-    id: 'cyberpunk',
-    name: 'Cyberpunk & HUD',
-    description: 'RGB chromatic split reveals, holographic HUD reticles, CRT phosphor terminals, and laser borders.',
-    iconName: 'Terminal',
-  },
-  {
-    id: 'fx',
-    name: 'Visual FX & Interactions',
-    description: 'Canvas mosaic reveals, pixel transitions, and starfield speed tunnels.',
+    id: 'animations',
+    name: 'Animations & FX',
+    description: 'Canvas mosaic reveals, physics gravity tag clouds, and floating doodle stickers.',
     iconName: 'Wand2',
   },
 ];
@@ -1073,7 +1067,7 @@ export function AuroraBackground({
   {
     id: 'magnetic-button',
     name: 'Magnetic Ripple Button',
-    category: 'components',
+    category: 'buttons',
     description: 'Interactive CTA button with magnetic spring physics tracking cursor proximity and multi-wave expanding ripple burst on click.',
     badge: 'SPRING',
     dependencies: ['framer-motion'],
@@ -1505,7 +1499,7 @@ export function DecryptedText({
   {
     id: 'pixel-card-reveal',
     name: 'Pixelated Image Reveal',
-    category: 'fx',
+    category: 'animations',
     description: 'Dynamic canvas pixel mosaic transition that dissolves retro 8-bit pixelation into ultra crisp 4K imagery on hover.',
     badge: 'CANVAS',
     dependencies: [],
