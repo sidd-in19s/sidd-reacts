@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import { Pipette, Check, Plus, Copy, X } from 'lucide-react';
+import { Pipette, Check, Plus, Copy } from 'lucide-react';
 
 // ==================== Color Conversion Utilities ====================
 
@@ -17,12 +17,14 @@ interface RGB {
 }
 
 function hexToRgb(hex: string): RGB {
+  if (!hex) return { r: 99, g: 102, b: 241 };
   let clean = hex.replace('#', '').trim();
   if (clean.length === 3) {
     clean = clean.split('').map((c) => c + c).join('');
   }
   if (clean.length !== 6) return { r: 99, g: 102, b: 241 };
   const num = parseInt(clean, 16);
+  if (isNaN(num)) return { r: 99, g: 102, b: 241 };
   return {
     r: (num >> 16) & 255,
     g: (num >> 8) & 255,
@@ -35,21 +37,21 @@ function rgbToHex(r: number, g: number, b: number): string {
     const clamped = Math.max(0, Math.min(255, Math.round(n)));
     return clamped.toString(16).padStart(2, '0');
   };
-  return `#${toHex(r)}${toHex(b)}`.toUpperCase();
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toUpperCase();
 }
 
-function rgbToHsv(r: number, g: number, b: number): HSV {
+function rgbToHsv(r: number, g: number, b: number, currentHue: number = 0): HSV {
   r /= 255;
-  b /= 255;
   g /= 255;
+  b /= 255;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
   const d = max - min;
-  let h = 0;
+  let h = currentHue;
   const s = max === 0 ? 0 : d / max;
   const v = max;
 
-  if (max !== min) {
+  if (max !== min && s > 0.001) {
     switch (max) {
       case r:
         h = (g - b) / d + (g < b ? 6 : 0);
@@ -61,9 +63,9 @@ function rgbToHsv(r: number, g: number, b: number): HSV {
         h = (r - g) / d + 4;
         break;
     }
-    h /= 6;
+    h = (h / 6) * 360;
   }
-  return { h: h * 360, s, v };
+  return { h: Math.round(h), s, v };
 }
 
 function hsvToRgb(h: number, s: number, v: number): RGB {
@@ -90,7 +92,6 @@ function hsvToRgb(h: number, s: number, v: number): RGB {
   };
 }
 
-// Preset Swatches modeled after Image 2
 const PRESET_PALETTES = [
   '#a855f7', // Purple
   '#6366f1', // Indigo
@@ -121,44 +122,46 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [coords, setCoords] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+
+  // Keep internal HSV source of truth
   const [hsv, setHsv] = useState<HSV>(() => {
     const rgb = hexToRgb(value || '#6366f1');
-    return rgbToHsv(rgb.r, rgb.g, rgb.b);
+    return rgbToHsv(rgb.r, rgb.g, rgb.b, 240);
   });
+
   const [customSwatches, setCustomSwatches] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
 
   const triggerRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const satValBoxRef = useRef<HTMLDivElement>(null);
+  const hueBarRef = useRef<HTMLDivElement>(null);
   const isDraggingSatVal = useRef(false);
   const isDraggingHue = useRef(false);
 
-  // Sync HSV when external value changes
+  // Sync internal state when external `value` changes from outside (not during active interaction)
   useEffect(() => {
-    if (value) {
+    if (!isDraggingSatVal.current && !isDraggingHue.current && value) {
       const rgb = hexToRgb(value);
-      setHsv(rgbToHsv(rgb.r, rgb.g, rgb.b));
+      setHsv((prev) => rgbToHsv(rgb.r, rgb.g, rgb.b, prev.h));
     }
   }, [value]);
 
-  // Calculate portal viewport coordinates so it never gets clipped or hidden
+  // Viewport popover positioning
   const updatePosition = useCallback(() => {
     if (!triggerRef.current) return;
     const rect = triggerRef.current.getBoundingClientRect();
     const popoverWidth = 330;
-    const popoverHeight = 390;
+    const popoverHeight = 400;
 
     let left = rect.left;
     let top = rect.bottom + 8;
 
-    // Check right screen boundary
     if (left + popoverWidth > window.innerWidth - 16) {
       left = window.innerWidth - popoverWidth - 16;
     }
     if (left < 16) left = 16;
 
-    // Check bottom screen boundary (flip up if too close to bottom)
     if (top + popoverHeight > window.innerHeight - 16 && rect.top - popoverHeight > 16) {
       top = rect.top - popoverHeight - 8;
     }
@@ -173,13 +176,11 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
     setIsOpen(!isOpen);
   };
 
-  // Update position on scroll/resize and click-outside to close
+  // Close on outside click
   useEffect(() => {
     if (!isOpen) return;
 
-    const handleScrollOrResize = () => {
-      updatePosition();
-    };
+    const handleScrollOrResize = () => updatePosition();
 
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
@@ -207,16 +208,18 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
   const currentRgb = useMemo(() => hsvToRgb(hsv.h, hsv.s, hsv.v), [hsv]);
   const currentHex = useMemo(() => rgbToHex(currentRgb.r, currentRgb.g, currentRgb.b), [currentRgb]);
 
-  // Update Saturation / Value on Drag
-  const handleSatValMove = useCallback(
+  // ==================== Instant Pointer Handlers ====================
+
+  // Saturation / Value Box update
+  const updateSatValFromEvent = useCallback(
     (clientX: number, clientY: number) => {
       if (!satValBoxRef.current) return;
       const rect = satValBoxRef.current.getBoundingClientRect();
       const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
       const y = Math.max(0, Math.min(rect.height, clientY - rect.top));
 
-      const s = x / rect.width;
-      const v = 1 - y / rect.height;
+      const s = Math.max(0, Math.min(1, x / rect.width));
+      const v = Math.max(0, Math.min(1, 1 - y / rect.height));
 
       setHsv((prev) => {
         const next = { ...prev, s, v };
@@ -228,11 +231,35 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
     [onChange]
   );
 
-  // Update Hue on Drag
-  const handleHueMove = useCallback(
-    (clientX: number, rect: DOMRect) => {
+  const handleSatValPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingSatVal.current = true;
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    updateSatValFromEvent(e.clientX, e.clientY);
+  };
+
+  const handleSatValPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDraggingSatVal.current) {
+      updateSatValFromEvent(e.clientX, e.clientY);
+    }
+  };
+
+  const handleSatValPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDraggingSatVal.current) {
+      updateSatValFromEvent(e.clientX, e.clientY);
+      isDraggingSatVal.current = false;
+      try {
+        (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
+      } catch {}
+    }
+  };
+
+  // Hue Slider update
+  const updateHueFromEvent = useCallback(
+    (clientX: number) => {
+      if (!hueBarRef.current) return;
+      const rect = hueBarRef.current.getBoundingClientRect();
       const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
-      const h = (x / rect.width) * 360;
+      const h = Math.round((x / rect.width) * 360) % 360;
 
       setHsv((prev) => {
         const next = { ...prev, h };
@@ -244,26 +271,36 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
     [onChange]
   );
 
-  // Global mouse handlers for drag experience
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (isDraggingSatVal.current) {
-        handleSatValMove(e.clientX, e.clientY);
-      }
-    };
+  const handleHuePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingHue.current = true;
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    updateHueFromEvent(e.clientX);
+  };
 
-    const handleMouseUp = () => {
-      isDraggingSatVal.current = false;
+  const handleHuePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDraggingHue.current) {
+      updateHueFromEvent(e.clientX);
+    }
+  };
+
+  const handleHuePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isDraggingHue.current) {
+      updateHueFromEvent(e.clientX);
       isDraggingHue.current = false;
-    };
+      try {
+        (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId);
+      } catch {}
+    }
+  };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [handleSatValMove]);
+  const handleSelectSwatch = (swatchHex: string) => {
+    const rgb = hexToRgb(swatchHex);
+    setHsv((prev) => {
+      const next = rgbToHsv(rgb.r, rgb.g, rgb.b, prev.h);
+      onChange(swatchHex.toUpperCase());
+      return next;
+    });
+  };
 
   const handleEyeDropper = async () => {
     if (typeof window !== 'undefined' && 'EyeDropper' in window) {
@@ -271,11 +308,9 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
         const eyeDropper = new (window as any).EyeDropper();
         const result = await eyeDropper.open();
         if (result?.sRGBHex) {
-          onChange(result.sRGBHex);
+          handleSelectSwatch(result.sRGBHex);
         }
-      } catch {
-        // User cancelled picker
-      }
+      } catch {}
     }
   };
 
@@ -291,7 +326,7 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
     setTimeout(() => setCopied(false), 1500);
   };
 
-  // Portal Popover Modal (Always renders top-level in document.body at z-[999999])
+  // Popover Portal Content
   const popoverContent = isOpen ? (
     <div
       ref={popoverRef}
@@ -306,23 +341,22 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
       {/* 1. 2D Saturation / Value Gradient Canvas */}
       <div
         ref={satValBoxRef}
-        onMouseDown={(e) => {
-          isDraggingSatVal.current = true;
-          handleSatValMove(e.clientX, e.clientY);
-        }}
-        className="relative h-44 w-full cursor-crosshair overflow-hidden rounded-2xl border border-zinc-700/60 shadow-inner"
+        onPointerDown={handleSatValPointerDown}
+        onPointerMove={handleSatValPointerMove}
+        onPointerUp={handleSatValPointerUp}
+        className="relative h-44 w-full cursor-crosshair overflow-hidden rounded-2xl border border-zinc-700/60 shadow-inner touch-none"
         style={{
           backgroundColor: `hsl(${hsv.h}, 100%, 50%)`,
         }}
       >
         {/* White-to-transparent horizontal gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent pointer-events-none" />
         {/* Black-to-transparent vertical gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
 
         {/* Glowing Glass Dragger Ring with Ripple Trail */}
         <div
-          className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 transition-transform duration-75"
+          className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
           style={{
             left: `${hsv.s * 100}%`,
             top: `${(1 - hsv.v) * 100}%`,
@@ -335,9 +369,7 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
               style={{ backgroundColor: currentHex }}
             />
             {/* Metallic Glass Ring */}
-            <div
-              className="h-5 w-5 rounded-full border-2 border-white bg-transparent shadow-[0_0_8px_rgba(0,0,0,0.8),inset_0_0_4px_rgba(0,0,0,0.5)]"
-            />
+            <div className="h-5 w-5 rounded-full border-2 border-white bg-transparent shadow-[0_0_8px_rgba(0,0,0,0.8),inset_0_0_4px_rgba(0,0,0,0.5)]" />
           </div>
         </div>
       </div>
@@ -356,23 +388,11 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
         )}
 
         <div
-          onMouseDown={(e) => {
-            isDraggingHue.current = true;
-            const rect = e.currentTarget.getBoundingClientRect();
-            handleHueMove(e.clientX, rect);
-
-            const moveHandler = (me: MouseEvent) => {
-              if (isDraggingHue.current) handleHueMove(me.clientX, rect);
-            };
-            const upHandler = () => {
-              isDraggingHue.current = false;
-              window.removeEventListener('mousemove', moveHandler);
-              window.removeEventListener('mouseup', upHandler);
-            };
-            window.addEventListener('mousemove', moveHandler);
-            window.addEventListener('mouseup', upHandler);
-          }}
-          className="relative h-4 flex-1 cursor-pointer rounded-full border border-zinc-700/60 shadow-inner"
+          ref={hueBarRef}
+          onPointerDown={handleHuePointerDown}
+          onPointerMove={handleHuePointerMove}
+          onPointerUp={handleHuePointerUp}
+          className="relative h-4 flex-1 cursor-pointer rounded-full border border-zinc-700/60 shadow-inner touch-none"
           style={{
             background:
               'linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)',
@@ -384,7 +404,7 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
             style={{ left: `${(hsv.h / 360) * 100}%` }}
           >
             <div
-              className="h-5 w-5 rounded-full border-2 border-white shadow-[0_2px_8px_rgba(0,0,0,0.7)] transition-transform hover:scale-110"
+              className="h-5 w-5 rounded-full border-2 border-white shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
               style={{
                 backgroundColor: `hsl(${hsv.h}, 100%, 50%)`,
               }}
@@ -402,7 +422,7 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
               <button
                 key={swatchHex}
                 type="button"
-                onClick={() => onChange(swatchHex)}
+                onClick={() => handleSelectSwatch(swatchHex)}
                 className={`relative h-6 w-full rounded-lg transition-all duration-150 hover:scale-110 cursor-pointer overflow-hidden ${
                   isSelected
                     ? 'ring-2 ring-cyan-400 ring-offset-1 ring-offset-[#12131b] scale-105 shadow-[0_0_10px_rgba(6,182,212,0.5)]'
@@ -410,8 +430,7 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
                 }`}
                 style={{ backgroundColor: swatchHex }}
               >
-                {/* Specular sheen reflection */}
-                <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-transparent to-black/25" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-transparent to-black/25 pointer-events-none" />
               </button>
             );
           })}
@@ -425,7 +444,7 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
               <button
                 key={swatchHex}
                 type="button"
-                onClick={() => onChange(swatchHex)}
+                onClick={() => handleSelectSwatch(swatchHex)}
                 className={`relative h-6 w-7 rounded-lg transition-all duration-150 hover:scale-110 cursor-pointer overflow-hidden ${
                   isSelected
                     ? 'ring-2 ring-cyan-400 ring-offset-1 ring-offset-[#12131b] scale-105 shadow-[0_0_10px_rgba(6,182,212,0.5)]'
@@ -433,7 +452,7 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
                 }`}
                 style={{ backgroundColor: swatchHex }}
               >
-                <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-transparent to-black/25" />
+                <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-transparent to-black/25 pointer-events-none" />
               </button>
             );
           })}
@@ -443,15 +462,15 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
             <button
               key={`${swatchHex}-${i}`}
               type="button"
-              onClick={() => onChange(swatchHex)}
+              onClick={() => handleSelectSwatch(swatchHex)}
               className="relative h-6 w-7 rounded-lg border border-white/20 transition-all hover:scale-110 cursor-pointer overflow-hidden"
               style={{ backgroundColor: swatchHex }}
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-transparent to-black/25" />
+              <div className="absolute inset-0 bg-gradient-to-b from-white/35 via-transparent to-black/25 pointer-events-none" />
             </button>
           ))}
 
-          {/* Add current color to palette */}
+          {/* Add current color to custom palette */}
           <button
             type="button"
             onClick={handleAddCustomSwatch}
@@ -513,13 +532,20 @@ export const SiddColorPicker: React.FC<SiddColorPickerProps> = ({
         <input
           type="text"
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            onChange(val);
+            if (val.length === 7 && val.startsWith('#')) {
+              const rgb = hexToRgb(val);
+              setHsv((prev) => rgbToHsv(rgb.r, rgb.g, rgb.b, prev.h));
+            }
+          }}
           placeholder="#RRGGBB"
           className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-1.5 font-mono text-xs text-zinc-200 uppercase tracking-wider focus:border-indigo-500 focus:outline-none transition-colors shadow-inner"
         />
       </div>
 
-      {/* Top-Level Portal (Ensures color picker is NEVER behind anything) */}
+      {/* Top-Level Portal */}
       {typeof document !== 'undefined' && ReactDOM.createPortal(popoverContent, document.body)}
     </div>
   );
