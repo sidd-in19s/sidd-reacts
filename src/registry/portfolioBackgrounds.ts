@@ -23,19 +23,19 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
     dependencies: ['three'],
     cliCommand: 'npx sidd-reacts add flat-surface-mesh',
     propsConfig: [
-      { name: 'meshAmbient', label: 'Mesh Ambient Tint', type: 'color', defaultValue: '#334155' },
-      { name: 'meshDiffuse', label: 'Mesh Diffuse Color', type: 'color', defaultValue: '#64748b' },
-      { name: 'light1Ambient', label: 'Light 1 Ambient', type: 'color', defaultValue: '#6366f1' },
-      { name: 'light1Diffuse', label: 'Light 1 Diffuse', type: 'color', defaultValue: '#ec4899' },
+      { name: 'meshAmbient', label: 'Mesh Ambient Tint', type: 'color', defaultValue: '#424447' },
+      { name: 'meshDiffuse', label: 'Mesh Diffuse Color', type: 'color', defaultValue: '#F6F6F6' },
+      { name: 'light1Ambient', label: 'Light 1 Ambient', type: 'color', defaultValue: '#111BDB' },
+      { name: 'light1Diffuse', label: 'Light 1 Diffuse', type: 'color', defaultValue: '#545454' },
       { name: 'segments', label: 'Mesh Segments', type: 'slider', defaultValue: 16, min: 6, max: 32, step: 2 },
       { name: 'slices', label: 'Mesh Slices', type: 'slider', defaultValue: 8, min: 4, max: 28, step: 2 },
       { name: 'speed', label: 'Wave Flow Speed', type: 'slider', defaultValue: 0.001, min: 0.0005, max: 0.005, step: 0.0005 },
     ],
     apiDocs: [
-      { name: 'meshAmbient', type: 'string', default: "'#334155'", description: 'Base ambient color of the polygon mesh' },
-      { name: 'meshDiffuse', type: 'string', default: "'#64748b'", description: 'Base diffuse highlight color of the polygon mesh' },
-      { name: 'light1Ambient', type: 'string', default: "'#6366f1'", description: 'Primary light source ambient color' },
-      { name: 'light1Diffuse', type: 'string', default: "'#ec4899'", description: 'Primary light source diffuse highlight' },
+      { name: 'meshAmbient', type: 'string', default: "'#424447'", description: 'Base ambient color of the polygon mesh' },
+      { name: 'meshDiffuse', type: 'string', default: "'#F6F6F6'", description: 'Base diffuse highlight color of the polygon mesh' },
+      { name: 'light1Ambient', type: 'string', default: "'#111BDB'", description: 'Primary light source ambient color' },
+      { name: 'light1Diffuse', type: 'string', default: "'#545454'", description: 'Primary light source diffuse highlight' },
     ],
     component: BackgroundFSS,
     codeTSX: `import React from 'react';
@@ -44,10 +44,10 @@ import { BackgroundFSS } from './BackgroundFSS';
 export default function Demo() {
   return (
     <BackgroundFSS
-      meshAmbient="#334155"
-      meshDiffuse="#64748b"
-      light1Ambient="#6366f1"
-      light1Diffuse="#ec4899"
+      meshAmbient="#424447"
+      meshDiffuse="#F6F6F6"
+      light1Ambient="#111BDB"
+      light1Diffuse="#545454"
       segments={16}
       slices={8}
     />

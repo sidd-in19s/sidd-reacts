@@ -17,7 +17,7 @@ const createMesh = (store, cfg, width, height) => {
     cfg.slices || 8
   );
 
-  store.material = new FSS.Material(cfg.meshAmbient || '#334155', cfg.meshDiffuse || '#64748b');
+  store.material = new FSS.Material(cfg.meshAmbient || '#424447', cfg.meshDiffuse || '#F6F6F6');
   store.mesh = new FSS.Mesh(store.geometry, store.material);
   store.scene.add(store.mesh);
 
@@ -44,8 +44,8 @@ const createLights = (store, cfg) => {
 
   const count = cfg.lightCount || 4;
   for (let i = 0; i < count; i++) {
-    const amb = cfg.light1Ambient || '#6366f1';
-    const diff = cfg.light1Diffuse || '#ec4899';
+    const amb = cfg.light1Ambient || '#111BDB';
+    const diff = cfg.light1Diffuse || '#545454';
 
     const light = new FSS.Light(amb, diff);
     light.position = FSS.Vector3.create(
@@ -113,20 +113,20 @@ const update = (store, cfg) => {
 
 export const BackgroundFSS: React.FC<any> = ({
   config = {},
-  meshAmbient = '#334155',
-  meshDiffuse = '#64748b',
-  light1Ambient = '#6366f1',
-  light1Diffuse = '#ec4899',
+  meshAmbient = '#424447',
+  meshDiffuse = '#F6F6F6',
+  light1Ambient = '#111BDB',
+  light1Diffuse = '#545454',
   segments = 16,
   slices = 8,
   speed = 0.001,
   className = '',
 }) => {
   const effectiveConfig = {
-    meshAmbient: meshAmbient || config?.meshAmbient || '#334155',
-    meshDiffuse: meshDiffuse || config?.meshDiffuse || '#64748b',
-    light1Ambient: light1Ambient || config?.light1Ambient || '#6366f1',
-    light1Diffuse: light1Diffuse || config?.light1Diffuse || '#ec4899',
+    meshAmbient: meshAmbient || config?.meshAmbient || '#424447',
+    meshDiffuse: meshDiffuse || config?.meshDiffuse || '#F6F6F6',
+    light1Ambient: light1Ambient || config?.light1Ambient || '#111BDB',
+    light1Diffuse: light1Diffuse || config?.light1Diffuse || '#545454',
     lightCount: config?.lightCount || 4,
     zOffset: config?.zOffset || 100,
     width: config?.width || 1.2,

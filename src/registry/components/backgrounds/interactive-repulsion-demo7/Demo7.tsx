@@ -3,9 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { gsap } from 'gsap';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
-import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 
-const radians = (degrees) => (degrees * Math.PI) / 180;
 const distance = (x1, y1, x2, y2) => Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
 const map = (value, start1, stop1, start2, stop2) =>
   ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
@@ -23,25 +21,25 @@ export interface BoxRepulsionProps {
 }
 
 export const Demo7: React.FC<BoxRepulsionProps> = ({
-  meshColor = '#ff00ff',
+  meshColor = '#a855f7',
   ambientColor = '#2900af',
-  spotColor = '#e000ff',
-  rectColor = '#0077ff',
-  backgroundColor = '#121218',
-  metalness = 0.58,
-  roughness = 0.18,
+  spotColor = '#00f0ff',
+  rectColor = '#ec4899',
+  backgroundColor = '#0c0c12',
+  metalness = 0.45,
+  roughness = 0.2,
   className = '',
   config = {},
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
-  const mCol = meshColor || config?.meshColor || config?.demo7MeshColor || '#ff00ff';
+  const mCol = meshColor || config?.meshColor || config?.demo7MeshColor || '#a855f7';
   const ambCol = ambientColor || config?.ambientColor || config?.demo7AmbientColor || '#2900af';
-  const spCol = spotColor || config?.spotColor || config?.demo7SpotColor || '#e000ff';
-  const rcCol = rectColor || config?.rectColor || config?.demo7RectColor || '#0077ff';
-  const bgCol = backgroundColor || config?.backgroundColor || config?.demo7BgColor || '#121218';
-  const met = metalness !== undefined ? metalness : (config?.metalness ?? config?.demo7Metalness ?? 0.58);
-  const rough = roughness !== undefined ? roughness : (config?.roughness ?? config?.demo7Roughness ?? 0.18);
+  const spCol = spotColor || config?.spotColor || config?.demo7SpotColor || '#00f0ff';
+  const rcCol = rectColor || config?.rectColor || config?.demo7RectColor || '#ec4899';
+  const bgCol = backgroundColor || config?.backgroundColor || config?.demo7BgColor || '#0c0c12';
+  const met = metalness !== undefined ? metalness : (config?.metalness ?? config?.demo7Metalness ?? 0.45);
+  const rough = roughness !== undefined ? roughness : (config?.roughness ?? config?.demo7Roughness ?? 0.2);
 
   const livePropsRef = useRef({
     backgroundColor: bgCol,
@@ -72,17 +70,13 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     let width = mount.clientWidth || 800;
     let height = mount.clientHeight || 500;
 
-    try {
-      RectAreaLightUniformsLib.init();
-    } catch (e) {
-      // already initialized
-    }
-
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(livePropsRef.current.backgroundColor);
 
-    const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
-    camera.position.set(0, 30, 0);
+    // Position camera with beautiful perspective viewing the 3D grid
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
+    camera.position.set(0, 24, 18);
+    camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(width, height);
@@ -92,14 +86,14 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     mount.appendChild(renderer.domElement);
 
     // Grid Setup
-    const gutter = { size: 1.2 };
-    const meshSize = 1.6;
+    const gutter = { size: 1.1 };
+    const meshSize = 1.5;
     const groupMesh = new THREE.Object3D();
-    const rows = 10;
-    const cols = 16;
+    const rows = 9;
+    const cols = 15;
     const meshes = [];
 
-    const boxGeo = new RoundedBoxGeometry(meshSize, meshSize, meshSize, 4, 0.1);
+    const boxGeo = new RoundedBoxGeometry(meshSize, meshSize, meshSize, 4, 0.15);
     const coneGeo = new THREE.ConeGeometry(meshSize * 0.7, meshSize * 1.2, 32);
     const torusGeo = new THREE.TorusGeometry(meshSize * 0.5, 0.25, 16, 32);
 
@@ -109,8 +103,8 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       color: new THREE.Color(livePropsRef.current.meshColor),
       metalness: livePropsRef.current.metalness,
       roughness: livePropsRef.current.roughness,
-      clearcoat: 0.8,
-      clearcoatRoughness: 0.2,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.15,
     });
 
     for (let row = 0; row < rows; row++) {
@@ -125,11 +119,7 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
         );
         mesh.castShadow = true;
         mesh.receiveShadow = true;
-        mesh.initialRotation = {
-          x: Math.random() * Math.PI,
-          y: Math.random() * Math.PI,
-          z: Math.random() * Math.PI,
-        };
+        mesh.rotation.x = Math.PI / 6;
         groupMesh.add(mesh);
         meshes[row][col] = mesh;
       }
@@ -140,39 +130,39 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     groupMesh.position.set(-xMid, 0, -zMid);
     scene.add(groupMesh);
 
-    // Floor
-    const floorGeo = new THREE.PlaneGeometry(200, 200);
-    const floorMat = new THREE.ShadowMaterial({ opacity: 0.3 });
+    // Floor Plane for shadow & raycasting
+    const floorGeo = new THREE.PlaneGeometry(150, 150);
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.25 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = -0.5;
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(
-      new THREE.Color(livePropsRef.current.ambientColor),
-      2.0
-    );
+    // Multi-Light Studio Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
     scene.add(ambientLight);
 
-    const spotLight = new THREE.SpotLight(
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    dirLight.position.set(20, 35, 20);
+    dirLight.castShadow = true;
+    scene.add(dirLight);
+
+    const spotLight = new THREE.PointLight(
       new THREE.Color(livePropsRef.current.spotColor),
-      800
+      80,
+      60
     );
-    spotLight.position.set(0, 40, 20);
-    spotLight.castShadow = true;
+    spotLight.position.set(0, 20, 10);
     scene.add(spotLight);
 
-    const rectLight = new THREE.RectAreaLight(
+    const fillLight = new THREE.PointLight(
       new THREE.Color(livePropsRef.current.rectColor),
-      15,
-      40,
-      40
+      60,
+      60
     );
-    rectLight.position.set(0, 25, 0);
-    rectLight.rotation.x = radians(90);
-    scene.add(rectLight);
+    fillLight.position.set(-15, 15, -10);
+    scene.add(fillLight);
 
     const raycaster = new THREE.Raycaster();
     const mouse3D = new THREE.Vector2(-1000, -1000);
@@ -181,7 +171,7 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       if (!mount) return;
       const rect = mount.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      const y = -(((e.clientY - rect.top) / rect.height) * 2 + 1);
       mouse3D.set(x, y);
     };
 
@@ -192,12 +182,11 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     const animate = () => {
       animationId = requestAnimationFrame(animate);
 
-      const { backgroundColor: currentBg, ambientColor: currentAmb, spotColor: currentSpot, rectColor: currentRect, meshColor: currentMesh, metalness: currentMetal, roughness: currentRough } = livePropsRef.current;
+      const { backgroundColor: currentBg, spotColor: currentSpot, rectColor: currentRect, meshColor: currentMesh, metalness: currentMetal, roughness: currentRough } = livePropsRef.current;
 
       scene.background.set(currentBg);
-      ambientLight.color.set(currentAmb);
       spotLight.color.set(currentSpot);
-      rectLight.color.set(currentRect);
+      fillLight.color.set(currentRect);
       material.color.set(currentMesh);
       material.metalness = currentMetal;
       material.roughness = currentRough;
@@ -220,21 +209,27 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
               mesh.position.z + groupMesh.position.z
             );
 
-            const yDist = map(mouseDistance, 7, 0, 0, 8);
+            const yDist = map(mouseDistance, 8, 0, 0, 6.5);
             const targetY = yDist < 0 ? 0 : yDist;
 
             gsap.to(mesh.position, {
-              duration: 0.25,
+              duration: 0.3,
               y: targetY,
               overwrite: 'auto',
             });
 
-            const scaleFactor = 1 + targetY * 0.15;
+            const scaleFactor = 1 + targetY * 0.18;
             gsap.to(mesh.scale, {
-              duration: 0.25,
+              duration: 0.3,
               x: scaleFactor,
               y: scaleFactor,
               z: scaleFactor,
+              overwrite: 'auto',
+            });
+
+            gsap.to(mesh.rotation, {
+              duration: 0.4,
+              y: targetY * 0.5,
               overwrite: 'auto',
             });
           }
