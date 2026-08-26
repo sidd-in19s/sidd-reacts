@@ -28,7 +28,7 @@ export const PORTFOLIO_BACKGROUNDS: RegistryItem[] = [
       { name: 'light1Ambient', label: 'Light 1 Ambient', type: 'color', defaultValue: '#6366f1' },
       { name: 'light1Diffuse', label: 'Light 1 Diffuse', type: 'color', defaultValue: '#ec4899' },
       { name: 'segments', label: 'Mesh Segments', type: 'slider', defaultValue: 16, min: 6, max: 32, step: 2 },
-      { name: 'slices', label: 'Mesh Slices', type: 'slider', defaultValue: 12, min: 6, max: 28, step: 2 },
+      { name: 'slices', label: 'Mesh Slices', type: 'slider', defaultValue: 8, min: 4, max: 28, step: 2 },
       { name: 'speed', label: 'Wave Flow Speed', type: 'slider', defaultValue: 0.001, min: 0.0005, max: 0.005, step: 0.0005 },
     ],
     apiDocs: [
@@ -49,7 +49,7 @@ export default function Demo() {
       light1Ambient="#6366f1"
       light1Diffuse="#ec4899"
       segments={16}
-      slices={12}
+      slices={8}
     />
   );
 }`,

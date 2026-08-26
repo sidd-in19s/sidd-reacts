@@ -14,7 +14,7 @@ const createMesh = (store, cfg, width, height) => {
     (width || 800) * (cfg.width || 1.2),
     (height || 500) * (cfg.height || 1.2),
     cfg.segments || 16,
-    cfg.slices || 12
+    cfg.slices || 8
   );
 
   store.material = new FSS.Material(cfg.meshAmbient || '#334155', cfg.meshDiffuse || '#64748b');
@@ -44,8 +44,8 @@ const createLights = (store, cfg) => {
 
   const count = cfg.lightCount || 4;
   for (let i = 0; i < count; i++) {
-    const amb = i === 0 ? (cfg.light1Ambient || '#6366f1') : (cfg.light2Ambient || '#3b82f6');
-    const diff = i === 0 ? (cfg.light1Diffuse || '#ec4899') : (cfg.light2Diffuse || '#10b981');
+    const amb = cfg.light1Ambient || '#6366f1';
+    const diff = cfg.light1Diffuse || '#ec4899';
 
     const light = new FSS.Light(amb, diff);
     light.position = FSS.Vector3.create(
@@ -117,10 +117,8 @@ export const BackgroundFSS: React.FC<any> = ({
   meshDiffuse = '#64748b',
   light1Ambient = '#6366f1',
   light1Diffuse = '#ec4899',
-  light2Ambient = '#3b82f6',
-  light2Diffuse = '#10b981',
   segments = 16,
-  slices = 12,
+  slices = 8,
   speed = 0.001,
   className = '',
 }) => {
@@ -129,15 +127,13 @@ export const BackgroundFSS: React.FC<any> = ({
     meshDiffuse: meshDiffuse || config?.meshDiffuse || '#64748b',
     light1Ambient: light1Ambient || config?.light1Ambient || '#6366f1',
     light1Diffuse: light1Diffuse || config?.light1Diffuse || '#ec4899',
-    light2Ambient: light2Ambient || config?.light2Ambient || '#3b82f6',
-    light2Diffuse: light2Diffuse || config?.light2Diffuse || '#10b981',
     lightCount: config?.lightCount || 4,
     zOffset: config?.zOffset || 100,
     width: config?.width || 1.2,
     height: config?.height || 1.2,
     depth: config?.depth || 10,
     segments: segments || config?.segments || 16,
-    slices: slices || config?.slices || 12,
+    slices: slices || config?.slices || 8,
     xRange: config?.xRange || 0.8,
     yRange: config?.yRange || 0.1,
     speed: speed || config?.speed || 0.001,
@@ -196,11 +192,11 @@ export const BackgroundFSS: React.FC<any> = ({
       createLights(store, configRef.current);
     };
 
-    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+    const handlePointerMove = (e: MouseEvent) => {
       if (!container) return;
       const rect = container.getBoundingClientRect();
-      const clientX = 'touches' in e && e.touches[0] ? e.touches[0].clientX - rect.left : (e as MouseEvent).clientX - rect.left;
-      const clientY = 'touches' in e && e.touches[0] ? e.touches[0].clientY - rect.top : (e as MouseEvent).clientY - rect.top;
+      const clientX = e.clientX - rect.left;
+      const clientY = e.clientY - rect.top;
 
       store.mouse.x = clientX;
       store.mouse.y = clientY;
@@ -262,21 +258,16 @@ export const BackgroundFSS: React.FC<any> = ({
     if (store.material.diffuse) store.material.diffuse.set(effectiveConfig.meshDiffuse);
 
     if (store.backgroundLights && store.backgroundLights.length > 0) {
-      store.backgroundLights.forEach((light, i) => {
-        if (i === 0) {
-          if (light.ambient) light.ambient.set(effectiveConfig.light1Ambient);
-          if (light.diffuse) light.diffuse.set(effectiveConfig.light1Diffuse);
-        } else {
-          if (light.ambient) light.ambient.set(effectiveConfig.light2Ambient);
-          if (light.diffuse) light.diffuse.set(effectiveConfig.light2Diffuse);
-        }
+      store.backgroundLights.forEach((light) => {
+        if (light.ambient) light.ambient.set(effectiveConfig.light1Ambient);
+        if (light.diffuse) light.diffuse.set(effectiveConfig.light1Diffuse);
       });
     }
 
     if (containerRef.current) {
       createMesh(store, effectiveConfig, containerRef.current.clientWidth || 800, containerRef.current.clientHeight || 500);
     }
-  }, [meshAmbient, meshDiffuse, light1Ambient, light1Diffuse, light2Ambient, light2Diffuse, segments, slices, speed]);
+  }, [meshAmbient, meshDiffuse, light1Ambient, light1Diffuse, segments, slices, speed]);
 
   return (
     <div
