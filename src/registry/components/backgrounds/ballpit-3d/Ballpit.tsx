@@ -568,23 +568,12 @@ class BallpitGroup extends THREE.InstancedMesh {
   setColors(colorList) {
     if (Array.isArray(colorList) && colorList.length > 0) {
       const colors = colorList.map((c) => new THREE.Color(c));
-      const outColor = new THREE.Color();
-
       for (let idx = 0; idx < this.count; idx++) {
-        const ratio = idx / Math.max(1, this.count - 1);
-        const scaled = ratio * (colors.length - 1);
-        const i = Math.floor(scaled);
-        const start = colors[i];
-        if (i >= colors.length - 1) {
-          outColor.copy(start);
-        } else {
-          const alpha = scaled - i;
-          outColor.copy(start).lerp(colors[i + 1], alpha);
-        }
-
-        this.setColorAt(idx, outColor);
+        // Assign discrete solid color from palette so colors remain pure and vibrant
+        const chosenColor = colors[idx % colors.length];
+        this.setColorAt(idx, chosenColor);
         if (idx === 0 && this.cursorLight) {
-          this.cursorLight.color.copy(outColor);
+          this.cursorLight.color.copy(chosenColor);
         }
       }
       if (this.instanceColor) this.instanceColor.needsUpdate = true;

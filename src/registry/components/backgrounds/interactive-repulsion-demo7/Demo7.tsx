@@ -23,7 +23,6 @@ export interface BoxRepulsionProps {
 }
 
 export const Demo7: React.FC<BoxRepulsionProps> = ({
-  // Default to Cyber Neon preset as requested
   meshColor = '#00f0ff',
   ambientColor = '#0a00b8',
   spotColor = '#00ffff',
@@ -82,8 +81,9 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(livePropsRef.current.backgroundColor);
 
+    // Top-down camera pointing directly at (0, 0, 0)
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
-    camera.position.set(0, 30, 0);
+    camera.position.set(0, 32, 0);
     camera.lookAt(0, 0, 0);
     scene.add(camera);
 
@@ -100,12 +100,12 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     mount.appendChild(renderer.domElement);
 
-    // Lights matching original portfolio
+    // Lights setup matching portfolio
     const ambientLight = new THREE.AmbientLight(new THREE.Color(livePropsRef.current.ambientColor), 1.5);
     scene.add(ambientLight);
 
     const spotLight = new THREE.SpotLight(new THREE.Color(livePropsRef.current.spotColor), 3.0, 1000);
-    spotLight.position.set(0, 27, 0);
+    spotLight.position.set(0, 28, 0);
     spotLight.decay = 0;
     spotLight.castShadow = true;
     spotLight.shadow.mapSize.width = 1024;
@@ -137,17 +137,17 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
 
     // Floor for shadows & raycasting
     const floorGeo = new THREE.PlaneGeometry(2000, 2000);
-    const floorMat = new THREE.ShadowMaterial({ opacity: 0.3 });
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.35 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.position.y = 0;
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Geometries & Template Variations from original portfolio
-    const boxGeo = new RoundedBoxGeometry(1, 1, 1, 4, 0.1);
+    // Geometric Templates
+    const boxGeo = new RoundedBoxGeometry(1, 1, 1, 4, 0.12);
     const coneGeo = new THREE.ConeGeometry(0.5, 1, 32);
-    const torusGeo = new THREE.TorusGeometry(0.4, 0.25, 16, 32);
+    const torusGeo = new THREE.TorusGeometry(0.4, 0.22, 16, 32);
 
     const geometryTemplates = [
       { geom: boxGeo, rotationX: 0, rotationY: 0, rotationZ: 0 },
@@ -169,14 +169,15 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       clearcoatRoughness: 0.1,
     });
 
-    const gutter = { size: 1.2 };
+    // Adequate gutter spacing so objects never overlap or intersect when scaled up
+    const gutter = { size: 1.6 };
     const stepSize = 1 + gutter.size;
 
     const getFrustumGrid = (w, h) => {
-      const vHeight = 2 * Math.tan((45 * Math.PI) / 360) * 30;
+      const vHeight = 2 * Math.tan((45 * Math.PI) / 360) * 32;
       const vWidth = vHeight * (w / h);
-      const c = Math.max(7, Math.floor((vWidth - 2) / stepSize));
-      const r = Math.max(5, Math.floor((vHeight - 2) / stepSize));
+      const c = Math.max(6, Math.floor((vWidth - 3) / stepSize));
+      const r = Math.max(4, Math.floor((vHeight - 3) / stepSize));
       return { cols: c, rows: r };
     };
 
@@ -199,9 +200,9 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
           mesh.receiveShadow = true;
 
           mesh.position.set(
-            col + col * gutter.size,
+            col * stepSize,
             0,
-            row + row * gutter.size
+            row * stepSize
           );
           mesh.rotation.x = tmpl.rotationX;
           mesh.rotation.y = tmpl.rotationY;
@@ -218,8 +219,8 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
         }
       }
 
-      const centerX = (numCols - 1 + (numCols - 1) * gutter.size) * 0.5;
-      const centerZ = (numRows - 1 + (numRows - 1) * gutter.size) * 0.5;
+      const centerX = ((numCols - 1) * stepSize) * 0.5;
+      const centerZ = ((numRows - 1) * stepSize) * 0.5;
       groupMesh.position.set(-centerX, 0, -centerZ);
     };
 
@@ -282,20 +283,22 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
               mesh.position.z + groupMesh.position.z
             );
 
-            const yDist = map(mouseDistance, 6, 0, 0, 10);
-            const targetY = yDist < 1 ? 1 : yDist;
+            // Objects pop UP towards camera lens (in front of background and other objects)
+            const yDist = map(mouseDistance, 5.5, 0, 0, 8.5);
+            const targetY = yDist < 0.2 ? 0 : yDist;
 
             gsap.to(mesh.position, {
-              duration: 0.2,
+              duration: 0.22,
               y: targetY,
               overwrite: 'auto',
             });
 
-            const scaleFactor = mesh.position.y / 2.5;
-            const scale = scaleFactor < 1 ? 1 : scaleFactor;
+            // Smooth scale factor capped to prevent overlapping
+            const scaleFactor = 1 + (targetY / 8.5) * 0.7;
+            const scale = targetY === 0 ? 1 : scaleFactor;
 
             gsap.to(mesh.scale, {
-              duration: 0.4,
+              duration: 0.35,
               ease: 'expo.out',
               x: scale,
               y: scale,
@@ -304,11 +307,11 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
             });
 
             gsap.to(mesh.rotation, {
-              duration: 0.5,
+              duration: 0.45,
               ease: 'expo.out',
-              x: map(mesh.position.y, -1, 1, radians(45), mesh.initialRotation.x),
-              z: map(mesh.position.y, -1, 1, radians(-90), mesh.initialRotation.z),
-              y: map(mesh.position.y, -1, 1, radians(90), mesh.initialRotation.y),
+              x: map(targetY, 0, 8.5, mesh.initialRotation.x, radians(45)),
+              z: map(targetY, 0, 8.5, mesh.initialRotation.z, radians(-90)),
+              y: map(targetY, 0, 8.5, mesh.initialRotation.y, radians(90)),
               overwrite: 'auto',
             });
           }
