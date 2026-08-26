@@ -3,13 +3,11 @@ import React from 'react';
 export type ComponentCategory =
   | 'text'
   | 'backgrounds'
-  | 'ui'
+  | 'components'
   | 'cards'
-  | 'fx'
-  | 'sketch'
   | 'stickers'
   | 'cyberpunk'
-  | 'kinetic';
+  | 'fx';
 
 export interface PropControl {
   name: string;

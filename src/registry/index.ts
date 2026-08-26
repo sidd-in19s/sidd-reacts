@@ -13,12 +13,6 @@ import { NEW_COMPONENTS } from './newComponents';
 
 export const CATEGORIES: CategoryInfo[] = [
   {
-    id: 'cards',
-    name: 'Cards & Containers',
-    description: 'Interactive 3D surfaces, holographic reflections, and glassmorphic cards.',
-    iconName: 'LayoutGrid',
-  },
-  {
     id: 'text',
     name: 'Text Animations',
     description: 'Kinetic typography, focus tracking, and cyberpunk decryptor effects.',
@@ -26,45 +20,39 @@ export const CATEGORIES: CategoryInfo[] = [
   },
   {
     id: 'backgrounds',
-    name: 'Ambient Backgrounds',
+    name: 'Backgrounds',
     description: 'Fluid dynamic auroras, particle vortex fields, and warp tunnels.',
     iconName: 'Sparkles',
   },
   {
-    id: 'ui',
-    name: 'UI Components',
+    id: 'components',
+    name: 'Components',
     description: 'Spring-physics magnetic buttons, macOS magnification docks, and interactive controls.',
     iconName: 'MousePointerClick',
   },
   {
-    id: 'fx',
-    name: 'Visual FX & Shaders',
-    description: 'Canvas mosaic reveals, pixel transitions, and starfield speed tunnels.',
-    iconName: 'Wand2',
-  },
-  {
-    id: 'sketch',
-    name: 'Hand-Drawn & Doodle',
-    description: 'Wobbly sticky notes, animated marker highlights, pencil sketch buttons, and scrapbook polaroids.',
-    iconName: 'Pencil',
+    id: 'cards',
+    name: 'Cards & Containers',
+    description: 'Interactive 3D surfaces, holographic reflections, and glassmorphic cards.',
+    iconName: 'LayoutGrid',
   },
   {
     id: 'stickers',
-    name: 'Stickers & Skeuomorph',
+    name: 'Stickers & Badges',
     description: 'Peelable 3D vinyl stickers, holographic foil badges, tactile rubber stamps, and neumorphic switches.',
     iconName: 'Stamp',
   },
   {
     id: 'cyberpunk',
-    name: 'Cyberpunk & Glitch HUD',
+    name: 'Cyberpunk & HUD',
     description: 'RGB chromatic split reveals, holographic HUD reticles, CRT phosphor terminals, and laser borders.',
     iconName: 'Terminal',
   },
   {
-    id: 'kinetic',
-    name: 'Fluid UI & Micro-FX',
-    description: 'Gooey blob tabs, dynamic gravity tag physics, liquid morph buttons, and elastic spring modals.',
-    iconName: 'Flame',
+    id: 'fx',
+    name: 'Visual FX & Interactions',
+    description: 'Canvas mosaic reveals, pixel transitions, and starfield speed tunnels.',
+    iconName: 'Wand2',
   },
 ];
 
@@ -1085,7 +1073,7 @@ export function AuroraBackground({
   {
     id: 'magnetic-button',
     name: 'Magnetic Ripple Button',
-    category: 'ui',
+    category: 'components',
     description: 'Interactive CTA button with magnetic spring physics tracking cursor proximity and multi-wave expanding ripple burst on click.',
     badge: 'SPRING',
     dependencies: ['framer-motion'],
@@ -1731,7 +1719,7 @@ export function PixelCardReveal({
   {
     id: 'floating-dock',
     name: 'Floating Mac Spring Dock',
-    category: 'ui',
+    category: 'components',
     description: 'macOS inspired floating magnification dock with smooth physics spring scaling, animated tooltips, and interactive icon items.',
     badge: 'SPRING',
     dependencies: ['framer-motion', 'lucide-react'],
@@ -2150,7 +2138,7 @@ export function IridescentGlassCard({
   {
     id: 'hyperspeed-tunnel',
     name: 'Hyperspeed Warp Tunnel',
-    category: 'fx',
+    category: 'backgrounds',
     description: 'Retro-futuristic warp speed starfield tunnel canvas with interactive cursor trajectory steering and custom color palettes.',
     badge: 'CANVAS',
     dependencies: [],

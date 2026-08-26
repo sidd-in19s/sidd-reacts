@@ -40,7 +40,7 @@ export const NEW_COMPONENTS: RegistryItem[] = [
   {
     id: 'wobbly-paper-note',
     name: 'Wobbly Paper Note Card',
-    category: 'sketch',
+    category: 'cards',
     badge: 'NEW',
     description: 'Sticky note card with torn paper clip path, realistic drop-shadow, and Framer Motion spring wobble and drag physics.',
     dependencies: ['framer-motion', 'clsx', 'tailwind-merge'],
@@ -59,21 +59,7 @@ export const NEW_COMPONENTS: RegistryItem[] = [
       { name: 'tiltAngle', type: 'number', default: '-3', description: 'Resting tilt angle in degrees' },
     ],
     component: WobblyPaperNote,
-    codeTSX: `import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-
-export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperColor = '#fef08a' }) => {
-  return (
-    <motion.div
-      drag
-      whileDrag={{ scale: 1.05 }}
-      className="p-6 rounded-sm shadow-2xl"
-      style={{ backgroundColor: paperColor }}
-    >
-      <h3 className="font-mono font-bold text-zinc-900">{title}</h3>
-    </motion.div>
-  );
-};`,
+    codeTSX: `// WobblyPaperNote.tsx implementation`,
     codeJSX: `// JSX version available`,
     demoUsage: `<WobblyPaperNote title="Product Brainstorm 💡" paperColor="#fef08a" />`,
   },
@@ -81,7 +67,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'marker-highlight-text',
     name: 'Animated Highlighter Marker Text',
-    category: 'sketch',
+    category: 'text',
     badge: 'HOT',
     description: 'Kinetic typography with animated SVG hand-drawn marker highlight streak that paints across keywords on hover/scroll.',
     dependencies: ['framer-motion', 'clsx'],
@@ -106,7 +92,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'sketch-svg-button',
     name: 'Pencil-Sketch SVG Button',
-    category: 'sketch',
+    category: 'components',
     badge: 'NEW',
     description: 'Interactive button with animated, looping sketchy border paths using SVG stroke-dashoffset drawing effects on hover.',
     dependencies: ['framer-motion'],
@@ -130,7 +116,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'doodle-floating-stickers',
     name: 'Doodle Floating Stickers',
-    category: 'sketch',
+    category: 'stickers',
     badge: 'SPRING',
     description: 'Physics-enabled cartoon stickers (stars, arrows, smileys) with spring recoil, rotation, and drag inertia on release.',
     dependencies: ['framer-motion'],
@@ -150,7 +136,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'scrapbook-polaroid',
     name: 'Tape & Scrapbook Polaroid',
-    category: 'sketch',
+    category: 'cards',
     badge: 'NEW',
     description: 'Polaroid card taped with textured semi-transparent washi tape that peels up realistically on cursor hover.',
     dependencies: ['framer-motion'],
@@ -502,7 +488,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'laser-sweep-box',
     name: 'Laser Sweep Border Box',
-    category: 'cyberpunk',
+    category: 'cards',
     badge: 'SPRING',
     description: 'Container with high-intensity glowing laser beam orbiting continuously around its perimeter borders.',
     dependencies: ['framer-motion'],
@@ -526,7 +512,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'gooey-blob-nav',
     name: 'Gooey Blob Navigation Bar',
-    category: 'kinetic',
+    category: 'components',
     badge: 'HOT',
     description: 'Tab navigation bar with fluid SVG gooey filter merging and stretching the active indicator between tabs.',
     dependencies: ['framer-motion'],
@@ -546,7 +532,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'gravity-tag-cloud',
     name: 'Dynamic Gravity Tag Cloud',
-    category: 'kinetic',
+    category: 'fx',
     badge: 'CANVAS',
     description: 'Interactive 2D physics tag cloud where chips fall with gravity, pile on each other, and bounce with cursor momentum.',
     dependencies: ['clsx'],
@@ -568,7 +554,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'liquid-morph-button',
     name: 'Liquid Morphing Progress Button',
-    category: 'kinetic',
+    category: 'components',
     badge: 'SPRING',
     description: 'Submit button that morphs into a circular spinner, fills with liquid level, and transforms into a checkmark on success.',
     dependencies: ['framer-motion', 'lucide-react'],
@@ -591,7 +577,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'elastic-spring-modal',
     name: 'Elastic Spring Drawer / Modal',
-    category: 'kinetic',
+    category: 'fx',
     badge: 'NEW',
     description: 'Sheet modal dialog with exaggerated bouncy spring physics and drag-to-dismiss momentum.',
     dependencies: ['framer-motion', 'lucide-react'],
@@ -613,7 +599,7 @@ export const WobblyPaperNote = ({ title = 'Design Notes & Ideas ✏️', paperCo
   {
     id: 'staggered-tilt-grid',
     name: 'Interactive Staggered Tilt Grid',
-    category: 'kinetic',
+    category: 'cards',
     badge: 'SPRING',
     description: 'Grid gallery where neighboring cards subtly tilt and scale toward the specific card being hovered.',
     dependencies: ['framer-motion'],
