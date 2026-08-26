@@ -246,6 +246,19 @@ export default function Demo() {
     dependencies: ['three', 'gsap'],
     cliCommand: 'npx sidd-reacts add interactive-repulsion-demo7',
     propsConfig: [
+      {
+        name: 'preset',
+        label: 'Color Theme Preset',
+        type: 'select',
+        defaultValue: 'cyber-neon',
+        options: [
+          { label: '⚡ Cyber Neon (Default)', value: 'cyber-neon' },
+          { label: '🎨 Original / Default', value: 'original-default' },
+          { label: '🌿 Emerald Glow', value: 'emerald-glow' },
+          { label: '👑 Gold Luxury', value: 'gold-luxury' },
+          { label: '🌌 Midnight Violet', value: 'midnight-violet' },
+        ],
+      },
       { name: 'meshColor', label: 'Mesh Geometry Color', type: 'color', defaultValue: '#00f0ff' },
       { name: 'ambientColor', label: 'Ambient Light Color', type: 'color', defaultValue: '#0a00b8' },
       { name: 'spotColor', label: 'Spotlight Beam Color', type: 'color', defaultValue: '#00ffff' },
@@ -255,6 +268,7 @@ export default function Demo() {
       { name: 'backgroundColor', label: 'Scene Floor Tint', type: 'color', defaultValue: '#070a14' },
     ],
     apiDocs: [
+      { name: 'preset', type: 'string', default: "'cyber-neon'", description: 'Pre-configured color and metalness theme preset' },
       { name: 'meshColor', type: 'string', default: "'#00f0ff'", description: 'Color of the 3D repulsive cubes and prisms' },
       { name: 'spotColor', type: 'string', default: "'#00ffff'", description: 'Color of the overhead spotlight' },
     ],
@@ -265,6 +279,7 @@ import { Demo7 } from './Demo7';
 export default function Demo() {
   return (
     <Demo7
+      preset="cyber-neon"
       meshColor="#00f0ff"
       ambientColor="#0a00b8"
       spotColor="#00ffff"
@@ -276,7 +291,7 @@ export default function Demo() {
   );
 }`,
     codeJSX: `// JSX version available`,
-    demoUsage: `<Demo7 meshColor="#00f0ff" spotColor="#00ffff" />`,
+    demoUsage: `<Demo7 preset="cyber-neon" />`,
   },
 
   {

@@ -6,11 +6,74 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
 
 const radians = (degrees) => (degrees * Math.PI) / 180;
-const distance = (x1, y1, x2, y2) => Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+const distance = (x1, y1, x2, y2) => Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
 const map = (value, start1, stop1, start2, stop2) =>
   ((value - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
 
+export const DEMO7_PRESETS: Record<string, {
+  name: string;
+  bg: string;
+  amb: string;
+  spot: string;
+  rect: string;
+  mesh: string;
+  met: number;
+  rough: number;
+}> = {
+  'cyber-neon': {
+    name: 'Cyber Neon',
+    bg: '#070a14',
+    amb: '#0a00b8',
+    spot: '#00ffff',
+    rect: '#ff0066',
+    mesh: '#00f0ff',
+    met: 0.72,
+    rough: 0.12,
+  },
+  'original-default': {
+    name: 'Original / Default',
+    bg: '#1b1b1b',
+    amb: '#2900af',
+    spot: '#e000ff',
+    rect: '#0077ff',
+    mesh: '#ff00ff',
+    met: 0.58,
+    rough: 0.18,
+  },
+  'emerald-glow': {
+    name: 'Emerald Glow',
+    bg: '#06130c',
+    amb: '#003318',
+    spot: '#00ff88',
+    rect: '#00d2ff',
+    mesh: '#10b981',
+    met: 0.65,
+    rough: 0.20,
+  },
+  'gold-luxury': {
+    name: 'Gold Luxury',
+    bg: '#140f09',
+    amb: '#421f00',
+    spot: '#ffb700',
+    rect: '#ff9100',
+    mesh: '#ffd700',
+    met: 0.85,
+    rough: 0.15,
+  },
+  'midnight-violet': {
+    name: 'Midnight Violet',
+    bg: '#0a0514',
+    amb: '#3b0764',
+    spot: '#d946ef',
+    rect: '#8b5cf6',
+    mesh: '#c084fc',
+    met: 0.60,
+    rough: 0.15,
+  },
+};
+
 export interface BoxRepulsionProps {
+  preset?: string;
   meshColor?: string;
   ambientColor?: string;
   spotColor?: string;
@@ -23,25 +86,28 @@ export interface BoxRepulsionProps {
 }
 
 export const Demo7: React.FC<BoxRepulsionProps> = ({
-  meshColor = '#00f0ff',
-  ambientColor = '#0a00b8',
-  spotColor = '#00ffff',
-  rectColor = '#ff0066',
-  backgroundColor = '#070a14',
-  metalness = 0.72,
-  roughness = 0.12,
+  preset = 'cyber-neon',
+  meshColor,
+  ambientColor,
+  spotColor,
+  rectColor,
+  backgroundColor,
+  metalness,
+  roughness,
   className = '',
   config = {},
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
-  const mCol = meshColor || config?.meshColor || config?.demo7MeshColor || '#00f0ff';
-  const ambCol = ambientColor || config?.ambientColor || config?.demo7AmbientColor || '#0a00b8';
-  const spCol = spotColor || config?.spotColor || config?.demo7SpotColor || '#00ffff';
-  const rcCol = rectColor || config?.rectColor || config?.demo7RectColor || '#ff0066';
-  const bgCol = backgroundColor || config?.backgroundColor || config?.demo7BgColor || '#070a14';
-  const met = metalness !== undefined ? metalness : (config?.metalness ?? config?.demo7Metalness ?? 0.72);
-  const rough = roughness !== undefined ? roughness : (config?.roughness ?? config?.demo7Roughness ?? 0.12);
+  const activePreset = DEMO7_PRESETS[preset] || DEMO7_PRESETS['cyber-neon'];
+
+  const mCol = meshColor || config?.meshColor || activePreset.mesh;
+  const ambCol = ambientColor || config?.ambientColor || activePreset.amb;
+  const spCol = spotColor || config?.spotColor || activePreset.spot;
+  const rcCol = rectColor || config?.rectColor || activePreset.rect;
+  const bgCol = backgroundColor || config?.backgroundColor || activePreset.bg;
+  const met = metalness !== undefined ? metalness : (config?.metalness ?? activePreset.met);
+  const rough = roughness !== undefined ? roughness : (config?.roughness ?? activePreset.rough);
 
   const livePropsRef = useRef({
     backgroundColor: bgCol,
@@ -81,9 +147,9 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(livePropsRef.current.backgroundColor);
 
-    // Top-down camera pointing directly at (0, 0, 0)
+    // Exact Camera positioning from Demo 2
     const camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
-    camera.position.set(0, 32, 0);
+    camera.position.set(0, 30, 0);
     camera.lookAt(0, 0, 0);
     scene.add(camera);
 
@@ -100,12 +166,21 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     mount.appendChild(renderer.domElement);
 
-    // Lights setup matching portfolio
-    const ambientLight = new THREE.AmbientLight(new THREE.Color(livePropsRef.current.ambientColor), 1.5);
+    // --- LIGHTS MATCHING OFFICIAL DEMO 2 ---
+    // 1. Ambient Light
+    const ambientLight = new THREE.AmbientLight(
+      new THREE.Color(livePropsRef.current.ambientColor),
+      1.2
+    );
     scene.add(ambientLight);
 
-    const spotLight = new THREE.SpotLight(new THREE.Color(livePropsRef.current.spotColor), 3.0, 1000);
-    spotLight.position.set(0, 28, 0);
+    // 2. Spot Light (Pointing directly onto the grid from top)
+    const spotLight = new THREE.SpotLight(
+      new THREE.Color(livePropsRef.current.spotColor),
+      2.5,
+      1000
+    );
+    spotLight.position.set(0, 27, 0);
     spotLight.decay = 0;
     spotLight.castShadow = true;
     spotLight.shadow.mapSize.width = 1024;
@@ -115,11 +190,18 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
     spotLight.shadow.bias = -0.001;
     scene.add(spotLight);
 
-    const rectLight = new THREE.RectAreaLight(new THREE.Color(livePropsRef.current.rectColor), 12.0, 2000, 2000);
+    // 3. Rect Area Light (For metallic edge highlights)
+    const rectLight = new THREE.RectAreaLight(
+      new THREE.Color(livePropsRef.current.rectColor),
+      10.0,
+      2000,
+      2000
+    );
     rectLight.position.set(5, 50, 50);
     rectLight.lookAt(0, 0, 0);
     scene.add(rectLight);
 
+    // 4. Point Lights (Warm yellow & green rim accents)
     const pLight1 = new THREE.PointLight(0xfff000, 0.6, 1000);
     pLight1.position.set(0, 10, -100);
     pLight1.decay = 0;
@@ -137,17 +219,17 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
 
     // Floor for shadows & raycasting
     const floorGeo = new THREE.PlaneGeometry(2000, 2000);
-    const floorMat = new THREE.ShadowMaterial({ opacity: 0.35 });
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.3 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.position.y = 0;
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Geometric Templates
-    const boxGeo = new RoundedBoxGeometry(1, 1, 1, 4, 0.12);
+    // Geometries & Template Variations from Demo 2
+    const boxGeo = new RoundedBoxGeometry(1, 1, 1, 4, 0.1);
     const coneGeo = new THREE.ConeGeometry(0.5, 1, 32);
-    const torusGeo = new THREE.TorusGeometry(0.4, 0.22, 16, 32);
+    const torusGeo = new THREE.TorusGeometry(0.4, 0.25, 16, 32);
 
     const geometryTemplates = [
       { geom: boxGeo, rotationX: 0, rotationY: 0, rotationZ: 0 },
@@ -165,20 +247,19 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       metalness: livePropsRef.current.metalness,
       roughness: livePropsRef.current.roughness,
       emissive: new THREE.Color('#000000'),
-      clearcoat: 0.5,
+      clearcoat: 0.4,
       clearcoatRoughness: 0.1,
     });
 
-    // Adequate gutter spacing so objects never overlap or intersect when scaled up
-    const gutter = { size: 1.6 };
+    const gutter = { size: 1.2 };
     const stepSize = 1 + gutter.size;
 
     const getFrustumGrid = (w, h) => {
-      const vHeight = 2 * Math.tan((45 * Math.PI) / 360) * 32;
+      const vHeight = 2 * Math.tan((45 * Math.PI) / 360) * 30;
       const vWidth = vHeight * (w / h);
-      const c = Math.max(6, Math.floor((vWidth - 3) / stepSize));
-      const r = Math.max(4, Math.floor((vHeight - 3) / stepSize));
-      return { cols: c, rows: r };
+      const cols = Math.max(7, Math.floor((vWidth - 3) / stepSize));
+      const rows = Math.max(5, Math.floor((vHeight - 3) / stepSize));
+      return { cols, rows };
     };
 
     let { cols, rows } = getFrustumGrid(width, height);
@@ -200,9 +281,9 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
           mesh.receiveShadow = true;
 
           mesh.position.set(
-            col * stepSize,
+            col + col * gutter.size,
             0,
-            row * stepSize
+            row + row * gutter.size
           );
           mesh.rotation.x = tmpl.rotationX;
           mesh.rotation.y = tmpl.rotationY;
@@ -219,14 +300,15 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
         }
       }
 
-      const centerX = ((numCols - 1) * stepSize) * 0.5;
-      const centerZ = ((numRows - 1) * stepSize) * 0.5;
+      const centerX = (numCols - 1 + (numCols - 1) * gutter.size) * 0.5;
+      const centerZ = (numRows - 1 + (numRows - 1) * gutter.size) * 0.5;
       groupMesh.position.set(-centerX, 0, -centerZ);
     };
 
     buildGrid(cols, rows);
     scene.add(groupMesh);
 
+    // Raycasting & Pointer Tracking
     const raycaster = new THREE.Raycaster();
     const mouse3D = new THREE.Vector2(-999, -999);
 
@@ -239,8 +321,13 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       mouse3D.y = -((clientY - rect.top) / rect.height) * 2 + 1;
     };
 
+    const onPointerLeave = () => {
+      mouse3D.set(-999, -999);
+    };
+
     mount.addEventListener('mousemove', onPointerMove, { passive: true });
     mount.addEventListener('touchmove', onPointerMove, { passive: true });
+    mount.addEventListener('mouseleave', onPointerLeave, { passive: true });
 
     onPointerMove({ clientX: width / 2, clientY: height / 2 });
 
@@ -268,53 +355,53 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       raycaster.setFromCamera(mouse3D, camera);
       const intersects = raycaster.intersectObjects([floor]);
 
-      if (intersects.length > 0) {
-        const { x, z } = intersects[0].point;
+      const hasPoint = intersects.length > 0;
+      const px = hasPoint ? intersects[0].point.x : -9999;
+      const pz = hasPoint ? intersects[0].point.z : -9999;
 
-        for (let row = 0; row < rows; row++) {
-          for (let col = 0; col < cols; col++) {
-            const mesh = meshes[row] && meshes[row][col];
-            if (!mesh) continue;
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const mesh = meshes[row] && meshes[row][col];
+          if (!mesh) continue;
 
+          let targetY = 1;
+          if (hasPoint) {
             const mouseDistance = distance(
-              x,
-              z,
+              px,
+              pz,
               mesh.position.x + groupMesh.position.x,
               mesh.position.z + groupMesh.position.z
             );
-
-            // Objects pop UP towards camera lens (in front of background and other objects)
-            const yDist = map(mouseDistance, 5.5, 0, 0, 8.5);
-            const targetY = yDist < 0.2 ? 0 : yDist;
-
-            gsap.to(mesh.position, {
-              duration: 0.22,
-              y: targetY,
-              overwrite: 'auto',
-            });
-
-            // Smooth scale factor capped to prevent overlapping
-            const scaleFactor = 1 + (targetY / 8.5) * 0.7;
-            const scale = targetY === 0 ? 1 : scaleFactor;
-
-            gsap.to(mesh.scale, {
-              duration: 0.35,
-              ease: 'expo.out',
-              x: scale,
-              y: scale,
-              z: scale,
-              overwrite: 'auto',
-            });
-
-            gsap.to(mesh.rotation, {
-              duration: 0.45,
-              ease: 'expo.out',
-              x: map(targetY, 0, 8.5, mesh.initialRotation.x, radians(45)),
-              z: map(targetY, 0, 8.5, mesh.initialRotation.z, radians(-90)),
-              y: map(targetY, 0, 8.5, mesh.initialRotation.y, radians(90)),
-              overwrite: 'auto',
-            });
+            const yDist = map(mouseDistance, 6, 0, 0, 10);
+            targetY = yDist < 1 ? 1 : yDist;
           }
+
+          gsap.to(mesh.position, {
+            duration: 0.2,
+            y: targetY,
+            overwrite: 'auto',
+          });
+
+          const scaleFactor = targetY / 2.5;
+          const scale = scaleFactor < 1 ? 1 : scaleFactor;
+
+          gsap.to(mesh.scale, {
+            duration: 0.4,
+            ease: 'expo.out',
+            x: scale,
+            y: scale,
+            z: scale,
+            overwrite: 'auto',
+          });
+
+          gsap.to(mesh.rotation, {
+            duration: 0.5,
+            ease: 'expo.out',
+            x: map(targetY, -1, 1, radians(45), mesh.initialRotation.x),
+            z: map(targetY, -1, 1, radians(-90), mesh.initialRotation.z),
+            y: map(targetY, -1, 1, radians(90), mesh.initialRotation.y),
+            overwrite: 'auto',
+          });
         }
       }
 
@@ -347,6 +434,7 @@ export const Demo7: React.FC<BoxRepulsionProps> = ({
       if (mount) {
         mount.removeEventListener('mousemove', onPointerMove);
         mount.removeEventListener('touchmove', onPointerMove);
+        mount.removeEventListener('mouseleave', onPointerLeave);
         if (renderer.domElement && mount.contains(renderer.domElement)) {
           mount.removeChild(renderer.domElement);
         }
